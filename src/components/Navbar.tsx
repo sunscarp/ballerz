@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 
 export default function Navbar({
@@ -40,7 +41,8 @@ export default function Navbar({
           )}
         </div>
 
-        <div className="flex gap-6 items-center">
+        <div className="flex gap-4 items-center">
+          <Link href="/inventory" className="rounded bg-indigo-600 px-3 py-1 text-white hover:bg-indigo-700">Inventory</Link>
           <span>Account</span>
           <span className="relative">
             Cart
