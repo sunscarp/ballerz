@@ -3,6 +3,9 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
+import { useAuth } from "@/context/AuthContext";
+import { signOut } from "firebase/auth";
+import { auth } from "@/firebase";
 
 export default function Navbar({
   onCategoryClick,
@@ -11,7 +14,18 @@ export default function Navbar({
 }) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
+  const [accountMenuOpen, setAccountMenuOpen] = useState(false);
   const { totalItems } = useCart();
+  const { user, loading } = useAuth();
+
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      setAccountMenuOpen(false);
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
 
   return (
     <header className="sticky top-0 z-50 bg-white border-b">
@@ -43,7 +57,44 @@ export default function Navbar({
 
         <div className="flex gap-4 items-center">
           <Link href="/inventory" className="rounded bg-indigo-600 px-3 py-1 text-white hover:bg-indigo-700">Inventory</Link>
-          <span>Account</span>
+          
+          {!loading && (
+            <>
+              {user ? (
+                <div 
+                  className="relative"
+                  onMouseEnter={() => setAccountMenuOpen(true)}
+                  onMouseLeave={() => setAccountMenuOpen(false)}
+                >
+                  <button className="font-bold">Account</button>
+                  {accountMenuOpen && (
+                    <div className="absolute top-8 right-0 bg-white border-2 rounded-xl shadow-lg w-52">
+                      <div className="px-4 py-3 border-b">
+                        <p className="font-semibold truncate">{user.displayName || user.email}</p>
+                        <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                      </div>
+                      <button
+                        onClick={handleSignOut}
+                        className="w-full px-4 py-3 text-left hover:bg-gray-100 font-semibold text-red-600"
+                      >
+                        Sign Out
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <>
+                  <Link href="/sign-in" className="font-bold hover:text-indigo-600">
+                    Sign In
+                  </Link>
+                  <Link href="/sign-up" className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">
+                    Sign Up
+                  </Link>
+                </>
+              )}
+            </>
+          )}
+          
           <span className="relative">
             Cart
             {totalItems > 0 && (
