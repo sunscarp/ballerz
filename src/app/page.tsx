@@ -19,7 +19,7 @@ type Product = {
 
 export default function Home() {
   const router = useRouter();
-  const { totalItems } = useCart();
+  const { totalItems, pulse } = useCart();
 
   const [products, setProducts] = useState<Product[]>([]);
   const [search, setSearch] = useState("");
@@ -64,11 +64,8 @@ export default function Home() {
       <footer className="mt-32 py-6 text-center font-bold border-t">
         © 2025 Ballerz. All rights reserved.
       </footer>
-      <Link href="/cart" className="fixed right-6 bottom-6 z-40 rounded-full bg-indigo-600 p-3 text-white shadow-xl hover:bg-indigo-700">
+      <Link href="/cart" className={`fixed right-6 bottom-6 z-40 rounded-full bg-indigo-600 p-3 text-white shadow-xl hover:bg-indigo-700 transition-all ${pulse ? "ring-4 ring-indigo-300 animate-pulse" : ""}`}>
         Cart
-        {totalItems > 0 && (
-          <sup className="ml-1 text-xs font-bold">{totalItems}</sup>
-        )}
       </Link>
     </>
   );

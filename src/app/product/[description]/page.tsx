@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, query, where, getDocs, addDoc, updateDoc, serverTimestamp, onSnapshot } from "firebase/firestore";
+import { useAuth } from "@/context/AuthContext";
+import { readGuestCartFromCookie, writeGuestCartToCookie } from "@/context/CartContext";
 import { db } from "@/firebase";
 import Navbar from "@/components/Navbar";
 import { useCart } from "@/context/CartContext";
@@ -25,14 +27,39 @@ export default function ProductDetail() {
   const params = useParams();
   const router = useRouter();
   const { addItem, removeItem, cart } = useCart();
+  const { user } = useAuth();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(0);
-  const [selectedSize, setSelectedSize] = useState<string>("");
+  const [selectedSize, setSelectedSize] = useState<string>("S");
+  const [pendingQty, setPendingQty] = useState<number>(1);
+  const [inCartCount, setInCartCount] = useState<number>(0);
 
   const description = decodeURIComponent(params.description as string);
   const productId = product?.ID.toString() || "";
   const quantity = cart[productId] ?? 0;
+
+  // keep a size-specific in-cart count (reads from Firestore for signed-in users, cookie for guests)
+  useEffect(() => {
+    if (!product) return;
+
+    if (user && user.email) {
+      const colRef = collection(db, "Cart");
+      const q = query(colRef, where("UserMail", "==", user.email), where("ID", "==", product.ID), where("Size", "==", selectedSize));
+      const unsub = onSnapshot(q, (snap) => {
+        let qty = 0;
+        snap.docs.forEach((d) => { qty += Number((d.data() as any).Quantity || 0); });
+        setInCartCount(qty);
+      }, (e) => console.error("cart snapshot error", e));
+      return () => unsub();
+    }
+
+    const guestArr = readGuestCartFromCookie();
+    const match = guestArr.find((it) => String(it.ID) === String(product.ID) && (it.Size || "S") === selectedSize);
+    setInCartCount(match ? Number(match.Quantity || 0) : 0);
+  }, [user, selectedSize, product]);
+
+
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -74,7 +101,7 @@ export default function ProductDetail() {
   if (loading) {
     return (
       <>
-        <Navbar onCategoryClick={() => {}} />
+        <Navbar />
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-2xl font-bold">Loading...</div>
         </div>
@@ -85,7 +112,7 @@ export default function ProductDetail() {
   if (!product) {
     return (
       <>
-        <Navbar onCategoryClick={() => {}} />
+        <Navbar />
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
             <h1 className="text-3xl font-bold mb-4">Product Not Found</h1>
@@ -102,14 +129,12 @@ export default function ProductDetail() {
   }
 
   const images = [product.ImageUrl1, product.ImageUrl2, product.ImageUrl3];
-  // Size options: split by ; or , or just use as is if single
-  const sizeOptions = product.Size
-    ? product.Size.split(/[,;]/).map(s => s.trim()).filter(Boolean)
-    : [product.Size];
+  // Fixed size options (only one may be selected). Preselect S.
+  const sizeOptions = ["S","M","L","XL"];
 
   return (
     <>
-      <Navbar onCategoryClick={() => {}} />
+      <Navbar />
       <main className="px-10 pt-32 pb-16 max-w-7xl mx-auto">
         <button
           onClick={() => router.back()}
@@ -182,6 +207,7 @@ export default function ProductDetail() {
                     </button>
                   ))}
                 </div>
+                <div className="mt-2 text-sm text-gray-600">In cart: {inCartCount}</div>
               </div>
               <div className="flex gap-4">
                 <span className="font-bold w-24">Material:</span>
@@ -198,21 +224,22 @@ export default function ProductDetail() {
             {/* Add to Cart */}
             <div className="space-y-4 pt-6">
               <div className="flex items-center gap-6">
-                <span className="font-bold text-lg">Quantity:</span>
+                <span className="font-bold">Add quantity:</span>
                 <div className="flex items-center gap-4">
                   <button
-                    onClick={() => removeItem(productId)}
-                    disabled={quantity === 0}
-                    className="px-4 py-2 border-2 rounded-lg font-bold disabled:opacity-40 hover:bg-gray-100"
+                    onClick={() => setPendingQty((p) => Math.max(1, p - 1))}
+                    className="px-4 py-2 border-2 rounded-lg font-bold hover:bg-gray-100"
+                    type="button"
                   >
                     −
                   </button>
                   <span className="min-w-[40px] text-center text-xl font-extrabold">
-                    {quantity}
+                    {pendingQty}
                   </span>
                   <button
-                    onClick={() => addItem(productId)}
+                    onClick={() => setPendingQty((p) => p + 1)}
                     className="px-4 py-2 bg-black text-white rounded-lg font-bold hover:bg-gray-800"
+                    type="button"
                   >
                     +
                   </button>
@@ -220,15 +247,58 @@ export default function ProductDetail() {
               </div>
 
               <button
-                onClick={() => {
-                  if (quantity === 0 && selectedSize) {
-                    addItem(productId);
+                onClick={async () => {
+                  if (!selectedSize) return;
+                  // optimistic UI
+                  setInCartCount((p) => p + pendingQty);
+
+                  // If user is signed in, persist to Firestore Cart collection
+                  if (user && user.email) {
+                    try {
+                      const colRef = collection(db, "Cart");
+                      const q = query(colRef, where("UserMail", "==", user.email), where("ID", "==", product.ID), where("Size", "==", selectedSize));
+                      const snap = await getDocs(q);
+                      if (!snap.empty) {
+                        const d = snap.docs[0];
+                        const existing = d.data() as any;
+                        const newQty = (existing.Quantity || 0) + pendingQty;
+                        await updateDoc(d.ref, { Quantity: newQty, ["Added On"]: serverTimestamp() });
+                      } else {
+                        await addDoc(colRef, { ["Added On"]: serverTimestamp(), ID: product.ID, Quantity: pendingQty, Size: selectedSize, UserMail: user.email });
+                      }
+                      // reflect in local context
+                      for (let i = 0; i < pendingQty; i++) addItem(productId);
+                      setPendingQty(1);
+                    } catch (e) {
+                      console.error("Failed to write cart to Firestore:", e);
+                      // rollback optimistic count
+                      setInCartCount((p) => Math.max(0, p - pendingQty));
+                    }
+                    return;
+                  }
+
+                  // guest: update cookie and local context
+                  try {
+                    const guestArr = readGuestCartFromCookie();
+                    const idx = guestArr.findIndex((it) => String(it.ID) === String(product.ID) && (it.Size || "S") === selectedSize);
+                    if (idx >= 0) {
+                      guestArr[idx].Quantity = Number(guestArr[idx].Quantity || 0) + pendingQty;
+                      guestArr[idx].AddedOn = new Date().toISOString();
+                    } else {
+                      guestArr.push({ ID: product.ID, Quantity: pendingQty, Size: selectedSize, AddedOn: new Date().toISOString() });
+                    }
+                    writeGuestCartToCookie(guestArr);
+                    for (let i = 0; i < pendingQty; i++) addItem(productId);
+                    setPendingQty(1);
+                  } catch (e) {
+                    console.error("Failed to update guest cookie:", e);
+                    setInCartCount((p) => Math.max(0, p - pendingQty));
                   }
                 }}
                 className={`w-full py-4 bg-black text-white rounded-lg font-bold text-lg hover:bg-gray-800 transition-colors ${!selectedSize ? "opacity-50 cursor-not-allowed" : ""}`}
                 disabled={!selectedSize}
               >
-                {quantity > 0 ? "Added to Cart" : "Add to Cart"}
+                Add to Cart
               </button>
             </div>
           </div>

@@ -14,7 +14,7 @@ export default function Navbar() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const { totalItems } = useCart();
+  const { totalItems, pulse } = useCart();
   const { user, loading } = useAuth();
   const { isAdmin, loading: adminLoading } = useAdmin(user);
 
@@ -103,11 +103,8 @@ export default function Navbar() {
             </>
           )}
 
-          <Link href="/cart" className="relative">
+          <Link href="/cart" className={`relative transition-all ${pulse ? "ring-4 ring-indigo-300 animate-pulse rounded-full" : ""}`}>
             Cart
-            {totalItems > 0 && (
-              <sup className="ml-1 text-xs font-bold">{totalItems}</sup>
-            )}
           </Link>
         </div>
       </div>
