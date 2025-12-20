@@ -8,11 +8,14 @@
     "start": "next start"
   },
   "dependencies": {
+    "dotenv": "^17.2.3",
     "firebase": "^12.7.0",
     "jspdf": "^3.0.4",
     "jspdf-autotable": "^5.0.2",
     "lucide-react": "^0.561.0",
     "next": "16.0.10",
+    "nodemailer": "^7.0.11",
+    "pdfkit": "^0.17.2",
     "react": "19.2.1",
     "react-dom": "19.2.1"
   },

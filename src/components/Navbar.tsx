@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import FAQModal from "@/components/FAQModal";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCart } from "@/context/CartContext";
@@ -43,6 +44,8 @@ export default function Navbar() {
   const handleSignOut = async () => {
     await signOut(auth);
   };
+
+  const [faqOpen, setFaqOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-50 bg-white border-b">
@@ -113,8 +116,10 @@ export default function Navbar() {
       <nav className="flex gap-10 px-10 pb-3 font-bold">
         <Link href="/">Home</Link>
         <Link href="/shop">Shop</Link>
-        <button>FAQ</button>
+        <button onClick={() => setFaqOpen(true)}>FAQ</button>
       </nav>
+
+      <FAQModal open={faqOpen} onClose={() => setFaqOpen(false)} />
     </header>
   );
 }

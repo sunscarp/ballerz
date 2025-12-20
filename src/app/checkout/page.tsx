@@ -257,6 +257,8 @@ export default function CheckoutPage() {
           setOrderDetails({ ...finalOrderData, orderId: orderRef.id });
           setOrderStatus("success");
 
+          // (Invoice email sending removed — handled manually)
+
           // Clear cart after successful order only when this was a regular cart checkout.
           // For buy-now single-item purchases we do not clear the user's cart.
           if (!isBuyNow) {
