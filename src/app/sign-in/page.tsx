@@ -44,33 +44,31 @@ export default function SignInPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg">
+    <div className="flex items-center justify-center bg-white px-4 font-light text-black py-8">
+      <div className="max-w-md w-full space-y-6 bg-white border border-gray-200 p-6 md:p-8 rounded-xl shadow-lg">
         <div>
-          <h2 className="text-center text-3xl font-bold">Sign In</h2>
-          <p className="mt-2 text-center text-gray-600">
-            Welcome back to Ballerz
-          </p>
+          <h2 className="text-center text-3xl md:text-4xl font-semibold">Sign In</h2>
+          <p className="mt-2 text-center text-gray-600 font-light">Welcome back to Ballerz</p>
         </div>
 
         {error && (
-          <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm">
+            <div className="bg-red-100 text-red-700 p-3 rounded-lg text-sm border border-red-200">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleEmailSignIn} className="space-y-6">
+        <form onSubmit={handleEmailSignIn} className="space-y-4">
           <div>
             <label htmlFor="email" className="block text-sm font-semibold mb-2">
               Email
             </label>
-            <input
+              <input
               id="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-2 border-2 rounded-lg font-semibold"
+              className="w-full px-4 py-2 border border-gray-300 bg-white text-black rounded-lg placeholder-gray-400 focus:border-gray-500"
               placeholder="your@email.com"
             />
           </div>
@@ -79,13 +77,13 @@ export default function SignInPage() {
             <label htmlFor="password" className="block text-sm font-semibold mb-2">
               Password
             </label>
-            <input
+              <input
               id="password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full px-4 py-2 border-2 rounded-lg font-semibold"
+              className="w-full px-4 py-2 border border-gray-300 bg-white text-black rounded-lg placeholder-gray-400 focus:border-gray-500"
               placeholder="••••••••"
             />
           </div>
@@ -93,7 +91,7 @@ export default function SignInPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-indigo-600 text-white py-3 rounded-lg font-bold hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full border border-black text-black bg-transparent py-3 rounded-lg font-semibold hover:bg-black hover:text-white transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? "Signing in..." : "Sign In"}
           </button>
@@ -101,17 +99,17 @@ export default function SignInPage() {
 
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t"></div>
+            <div className="w-full border-t border-gray-700"></div>
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-white text-gray-500 font-semibold">Or continue with</span>
+            <span className="px-2 bg-white text-gray-600">Or continue with</span>
           </div>
         </div>
 
         <button
           onClick={handleGoogleSignIn}
           disabled={loading}
-          className="w-full flex items-center justify-center gap-3 bg-white border-2 text-gray-900 py-3 rounded-lg font-bold hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full flex items-center justify-center gap-3 border border-black text-black bg-transparent py-3 rounded-lg font-semibold hover:bg-black hover:text-white transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24">
             <path
@@ -134,12 +132,12 @@ export default function SignInPage() {
           Sign in with Google
         </button>
 
-        <p className="text-center text-sm text-gray-600">
-          Don't have an account?{" "}
-          <Link href="/sign-up" className="text-indigo-600 font-bold hover:underline">
+        <div className="flex justify-center items-center text-sm mt-2">
+          <span className="text-gray-600 font-semibold">Don't have an account?</span>
+          <Link href="/sign-up" className="ml-2 text-sm text-blue-600 font-semibold hover:underline cursor-pointer">
             Sign up
           </Link>
-        </p>
+        </div>
       </div>
     </div>
   );

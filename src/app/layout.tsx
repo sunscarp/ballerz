@@ -94,7 +94,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${montserrat.variable} font-montserrat antialiased bg-black text-white`}>
+      <body className={`${montserrat.variable} font-montserrat antialiased bg-white text-gray-900`}>
         <AuthProvider>
           <CartProvider>
             <SearchProvider>

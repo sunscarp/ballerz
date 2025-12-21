@@ -71,6 +71,7 @@ export default function CartPage() {
   const [loadingItems, setLoadingItems] = useState(true);
   const [inventoryMap, setInventoryMap] = useState<Record<string, any>>({});
 
+
   // Firestore subscription for logged-in users
   useEffect(() => {
     let unsub: (() => void) | undefined;
@@ -198,7 +199,7 @@ export default function CartPage() {
   }
 
   if (loading || loadingItems) {
-    return <div className="px-10 pt-32">Loading cart…</div>;
+    return <div className="px-4 py-8">Loading cart…</div>;
   }
 
   const grandTotal = items.reduce((sum, it) => {
@@ -210,13 +211,14 @@ export default function CartPage() {
   }, 0);
 
   return (
-    <div className="px-10 pt-32">
-      <h1 className="text-2xl font-bold">Your Cart ({items.reduce((s, it) => s + (it.Quantity || 0), 0)})</h1>
+    <div className="bg-white min-h-screen">
+      <main className="px-4 py-8 max-w-6xl mx-auto">
+        <h1 className="text-2xl font-bold text-gray-900">Your Cart ({items.reduce((s, it) => s + (it.Quantity || 0), 0)})</h1>
 
       {items.length === 0 ? (
         <div className="mt-6">
           <p>Your cart is empty.</p>
-          <Link href="/" className="mt-4 inline-block text-indigo-600 font-semibold">Continue shopping</Link>
+          <Link href="/" className="mt-4 inline-block text-blue-400 font-semibold">Continue shopping</Link>
         </div>
       ) : (
         <>
@@ -226,15 +228,29 @@ export default function CartPage() {
             const prod = inventoryMap[key];
             const img = prod?.ImageUrl1 || prod?.ImageUrl2 || prod?.ImageUrl3 || "/favicon.ico";
             return (
-              <li key={String(it.docId ?? it.ID)} className="flex items-center justify-between border p-4 rounded">
-                <div className="flex gap-4 items-center">
-                  <img src={img} alt={prod?.Product ?? `item-${key}`} className="h-20 w-28 object-cover rounded" />
-                  <div>
-                    <p className="font-semibold truncate">{prod?.Product ?? `Item ${key}`}</p>
-                    {it.Size && <p className="text-lg font-semibold text-gray-700 mt-1">Size: {it.Size}</p>}
+              <li key={String(it.docId ?? it.ID)} className="flex flex-col md:flex-row items-start md:items-center justify-between border border-black/10 p-4 rounded bg-white shadow-sm">
+                  <Link
+                    href={`/product/${encodeURIComponent(String(prod?.Description || prod?.Product || key))}`}
+                    className="flex flex-col md:flex-row gap-4 items-start md:items-center flex-1 hover:bg-gray-50 rounded-md p-1 transition cursor-pointer"
+                  >
+                  <div className="flex items-start gap-4 w-full">
+                    <img src={img} alt={prod?.Product ?? `item-${key}`} className="w-20 h-20 md:w-28 md:h-20 object-cover rounded flex-shrink-0" />
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between">
+                        <p className="text-lg font-semibold text-gray-900">{prod?.Product ?? `Item ${key}`}</p>
+                      </div>
+                      <div className="mt-1 space-y-1">
+                        {it.Size && <p className="text-sm font-semibold text-gray-700">Size: {it.Size}</p>}
+                        <p className="text-sm text-gray-600">Quantity: {it.Quantity}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* description and metadata below */}
+                    <div className="w-full mt-3">
                     {it.isCustomized && (
-                      <div className="mt-2 p-2 bg-blue-50 rounded border border-blue-200">
-                        <p className="text-sm font-medium text-blue-800">
+                      <div className="mt-1 p-2 bg-gray-50 rounded border border-black/5">
+                        <p className="text-sm font-medium text-gray-800">
                           Customized: "{it.customizationText}"
                         </p>
                         {it.customPrice && (
@@ -244,15 +260,15 @@ export default function CartPage() {
                         )}
                       </div>
                     )}
-                    <p className="text-sm text-gray-500">Quantity: {it.Quantity}</p>
-                    <p className="text-sm text-slate-700 mt-1">{prod?.Description}</p>
+
+                    <p className="text-sm text-gray-700 leading-6 mt-2">{prod?.Description}</p>
                     {(() => {
                       const addedOn = (it as any)["Added On"] ?? (it as any).AddedOn ?? (it as any).addedOn ?? (it as any).AddedOnTimestamp ?? (it as any).AddedOnDate;
-                      return addedOn ? <p className="text-sm text-gray-500 mt-1">Added on: {formatDateOnly(addedOn)}</p> : null;
+                      return addedOn ? <p className="text-sm text-gray-500 mt-2">Added on: {formatDateOnly(addedOn)}</p> : null;
                     })()}
                   </div>
-                </div>
-                <div className="flex flex-col items-end gap-2">
+                </Link>
+                <div className="flex flex-row md:flex-col items-center md:items-end gap-2 mt-3 md:mt-0 md:ml-4">
                   {(() => {
                     const basePrice = prod?.Price != null ? Number(prod.Price) : null;
                     const customPrice = it.isCustomized && it.customPrice ? Number(it.customPrice) : 0;
@@ -262,37 +278,38 @@ export default function CartPage() {
                     const total = totalPerItem * qty;
                     return (
                       <div className="text-right">
-                        <div className="text-lg font-semibold">{formatCurrency(total)}</div>
-                        <div className="text-sm font-normal text-gray-600">
-                          {formatCurrency(totalPerItem)} per piece
-                          {customPrice > 0 && (
-                            <div className="text-xs text-blue-600">
-                              (Base: {formatCurrency(basePrice)} + Custom: {formatCurrency(customPrice)})
-                            </div>
-                          )}
+                          <div className="text-lg font-semibold text-gray-900">{formatCurrency(total)}</div>
+                          <div className="text-sm font-normal text-gray-600">
+                            {formatCurrency(totalPerItem)} per piece
+                            {customPrice > 0 && (
+                              <div className="text-xs text-blue-600">
+                                (Base: {formatCurrency(basePrice)} + Custom: {formatCurrency(customPrice)})
+                              </div>
+                            )}
+                          </div>
                         </div>
-                      </div>
                     );
                   })()}
-                  <div className="flex gap-2">
-                    <button onClick={() => changeQuantity(it, -1)} className="px-3 py-1 bg-gray-200 rounded">-</button>
-                    <button onClick={() => changeQuantity(it, +1)} className="px-3 py-1 bg-gray-200 rounded">+</button>
-                    <button onClick={() => removeItem(it)} className="px-3 py-1 bg-red-100 text-red-600 rounded">Remove</button>
-                  </div>
+                    <div className="flex gap-2">
+                      <button onClick={() => changeQuantity(it, -1)} className="px-3 py-2 border border-gray-300 rounded bg-white text-gray-800 hover:bg-gray-50 cursor-pointer w-full md:w-auto">-</button>
+                      <button onClick={() => changeQuantity(it, +1)} className="px-3 py-2 border border-gray-300 rounded bg-white text-gray-800 hover:bg-gray-50 cursor-pointer w-full md:w-auto">+</button>
+                      <button onClick={() => removeItem(it)} className="px-3 py-2 border border-red-300 rounded bg-white text-red-600 hover:bg-red-50 cursor-pointer w-full md:w-auto">Remove</button>
+                    </div>
                 </div>
               </li>
             );
           })}
           </ul>
 
-          <div className="mt-6 flex items-center justify-between border-t pt-4">
-          <div className="text-xl font-bold">Cart Total: {formatCurrency(grandTotal)}</div>
-          <div>
-            <button className="bg-indigo-600 text-white px-4 py-2 rounded" onClick={() => router.push('/checkout')}>Checkout</button>
-          </div>
-          </div>
+            <div className="mt-6 flex items-center justify-between border-t border-black/10 pt-4">
+            <div className="text-xl font-bold text-gray-900">Cart Total: {formatCurrency(grandTotal)}</div>
+            <div>
+              <button className="bg-black text-white px-4 py-2 rounded font-semibold hover:opacity-95 cursor-pointer" onClick={() => router.push('/checkout')}>Checkout</button>
+            </div>
+            </div>
         </>
       )}
-    </div>
+        </main>
+      </div>
   );
 }

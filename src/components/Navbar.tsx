@@ -196,21 +196,21 @@ export default function Navbar() {
               <Link
                 href="/"
                 className="block py-3 px-4 text-lg text-black hover:bg-gray-100 rounded-md transition-colors"
-                onClick={() => setMenuOpen(false)}
+                onClick={(e) => { e.preventDefault(); setMenuOpen(false); window.location.href = '/'; }}
               >
                 Home
               </Link>
               <Link
                 href="/shop"
                 className="block py-3 px-4 text-lg text-black hover:bg-gray-100 rounded-md transition-colors"
-                onClick={() => setMenuOpen(false)}
+                onClick={(e) => { e.preventDefault(); setMenuOpen(false); window.location.href = '/shop'; }}
               >
                 Shop
               </Link>
               <button
                 onClick={() => {
-                  setFaqOpen(true);
                   setMenuOpen(false);
+                  router.push('/faq');
                 }}
                 className="block w-full text-left py-3 px-4 text-lg text-black hover:bg-gray-100 rounded-md transition-colors"
               >
@@ -465,6 +465,7 @@ export default function Navbar() {
           <Link
             href="/"
             className="text-2xl font-bold hover:text-gray-300 transition-colors absolute left-1/2 transform -translate-x-1/2"
+            onClick={(e) => { e.preventDefault(); window.location.href = '/'; }}
           >
             Ballerz
           </Link>
@@ -522,6 +523,7 @@ export default function Navbar() {
                 <Link
                   href="/orders"
                   className="block px-4 py-2 text-sm text-white hover:bg-gray-800 transition-colors"
+                  onClick={(e) => { e.preventDefault(); window.location.href = '/orders'; }}
                 >
                   Orders
                 </Link>
@@ -539,12 +541,14 @@ export default function Navbar() {
                 <Link
                   href="/sign-in"
                   className="text-white hover:text-gray-300 transition-colors"
+                  onClick={(e) => { e.preventDefault(); window.location.href = '/sign-in'; }}
                 >
                   Sign In
                 </Link>
                 <Link
                   href="/sign-up"
                   className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                  onClick={(e) => { e.preventDefault(); window.location.href = '/sign-up'; }}
                 >
                   Sign Up
                 </Link>
@@ -557,6 +561,7 @@ export default function Navbar() {
                 pulse ? "ring-4 ring-blue-300 animate-pulse rounded-full px-2 py-1" : ""
               }`}
               style={{ minWidth: '2.5rem', minHeight: '2.5rem' }}
+              onClick={(e) => { e.preventDefault(); window.location.href = '/cart'; }}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

@@ -78,22 +78,20 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg">
+    <div className="min-h-screen flex items-center justify-center bg-white px-4 font-light text-black">
+      <div className="max-w-md w-full space-y-6 bg-white border border-gray-200 p-6 md:p-8 rounded-xl shadow-lg">
         <div>
-          <h2 className="text-center text-3xl font-bold">Sign Up</h2>
-          <p className="mt-2 text-center text-gray-600">
-            Create your Ballerz account
-          </p>
+          <h2 className="text-center text-3xl md:text-4xl font-semibold">Sign Up</h2>
+          <p className="mt-2 text-center text-gray-600 font-light">Create your Ballerz account</p>
         </div>
 
         {error && (
-          <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm">
+          <div className="bg-red-100 text-red-700 p-3 rounded-lg text-sm border border-red-200">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleEmailSignUp} className="space-y-6">
+        <form onSubmit={handleEmailSignUp} className="space-y-4">
           <div>
             <label htmlFor="name" className="block text-sm font-semibold mb-2">
               Name
@@ -103,7 +101,7 @@ export default function SignUpPage() {
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-4 py-2 border-2 rounded-lg font-semibold"
+              className="w-full px-4 py-2 border border-gray-300 bg-white text-black rounded-lg placeholder-gray-400 focus:border-gray-500"
               placeholder="Your name"
             />
           </div>
@@ -118,7 +116,7 @@ export default function SignUpPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-2 border-2 rounded-lg font-semibold"
+              className="w-full px-4 py-2 border border-gray-300 bg-white text-black rounded-lg placeholder-gray-400 focus:border-gray-500"
               placeholder="your@email.com"
             />
           </div>
@@ -133,7 +131,7 @@ export default function SignUpPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full px-4 py-2 border-2 rounded-lg font-semibold"
+              className="w-full px-4 py-2 border border-gray-300 bg-white text-black rounded-lg placeholder-gray-400 focus:border-gray-500"
               placeholder="••••••••"
             />
           </div>
@@ -148,34 +146,34 @@ export default function SignUpPage() {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
-              className="w-full px-4 py-2 border-2 rounded-lg font-semibold"
+              className="w-full px-4 py-2 border border-gray-300 bg-white text-black rounded-lg placeholder-gray-400 focus:border-gray-500"
               placeholder="••••••••"
             />
           </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-indigo-600 text-white py-3 rounded-lg font-bold hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {loading ? "Creating account..." : "Sign Up"}
-          </button>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full border border-black text-black bg-transparent py-3 rounded-lg font-semibold hover:bg-black hover:text-white transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? "Creating account..." : "Sign Up"}
+            </button>
         </form>
 
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t"></div>
+            <div className="w-full border-t border-gray-700"></div>
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-white text-gray-500 font-semibold">Or continue with</span>
+            <span className="px-2 bg-white text-gray-600">Or continue with</span>
           </div>
         </div>
 
-        <button
-          onClick={handleGoogleSignUp}
-          disabled={loading}
-          className="w-full flex items-center justify-center gap-3 bg-white border-2 text-gray-900 py-3 rounded-lg font-bold hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
+          <button
+            onClick={handleGoogleSignUp}
+            disabled={loading}
+            className="w-full flex items-center justify-center gap-3 border border-black text-black bg-transparent py-3 rounded-lg font-semibold hover:bg-black hover:text-white transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          >
           <svg className="w-5 h-5" viewBox="0 0 24 24">
             <path
               fill="#4285F4"
@@ -197,12 +195,12 @@ export default function SignUpPage() {
           Sign up with Google
         </button>
 
-        <p className="text-center text-sm text-gray-600">
-          Already have an account?{" "}
-          <Link href="/sign-in" className="text-indigo-600 font-bold hover:underline">
+        <div className="flex justify-center items-center text-sm mt-2">
+          <span className="text-gray-600 font-semibold">Already have an account?</span>
+          <Link href="/sign-in" className="ml-2 text-sm text-blue-600 font-semibold hover:underline cursor-pointer">
             Sign in
           </Link>
-        </p>
+        </div>
       </div>
     </div>
   );
