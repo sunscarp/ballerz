@@ -53,38 +53,38 @@ function Marquee() {
 
 // Footer Component
 function Footer() {
-  return (
-    <footer className="bg-black text-white mt-32 py-12">
-      <div className="max-w-7xl ml-0 pl-15">
-        <div className="grid md:grid-cols-3 gap-8 mb-12 text-left items-start">
-          <div>
-            <h4 className="text-xl font-semibold mb-2">About Ballerz</h4>
-            <p className="text-gray-300">Discover Ballerz – India’s trusted streetwear brand. Oversized tees, polos &amp; retro classics crafted with quality fabrics and fast delivery.</p>
+    return (
+      <footer className="bg-black text-white mt-20 py-8 px-4 w-full">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 mb-8 text-left items-start">
+            <div className="mb-6 md:mb-0">
+              <h4 className="text-lg sm:text-xl font-semibold mb-2">About Ballerz</h4>
+              <p className="text-gray-300 text-sm sm:text-base">Discover Ballerz – India’s trusted streetwear brand. Oversized tees, polos &amp; retro classics crafted with quality fabrics and fast delivery.</p>
+            </div>
+
+            <div className="mb-6 md:mb-0 flex flex-col items-start sm:items-center">
+              <h2 className="text-xl sm:text-2xl font-bold mb-2">Ballerz</h2>
+              <p className="text-gray-300 text-sm sm:text-base">India’s leading Streetwear store</p>
+            </div>
+
+            <div>
+              <h4 className="text-lg sm:text-xl font-semibold mb-2">Policies</h4>
+              <ul className="text-gray-300 space-y-2 text-sm sm:text-base">
+                <li><Link href="/contact" className="hover:underline">Contact Information</Link></li>
+                <li><Link href="/privacy-policy" className="hover:underline">Privacy Policy</Link></li>
+                <li><Link href="/refund-policy" className="hover:underline">Refund Policy</Link></li>
+                <li><Link href="/shipping-policy" className="hover:underline">Shipping Policy</Link></li>
+                <li><Link href="/tos" className="hover:underline">Terms of Service</Link></li>
+              </ul>
+            </div>
           </div>
 
-          <div>
-            <h2 className="text-2xl font-bold mb-2">Ballerz</h2>
-            <p className="text-gray-300">India’s leading Streetwear store</p>
-          </div>
-
-          <div>
-            <h4 className="text-xl font-semibold mb-2">Policies</h4>
-            <ul className="text-gray-300 space-y-2">
-              <li><Link href="/contact" className="hover:underline">Contact Information</Link></li>
-              <li><Link href="/privacy-policy" className="hover:underline">Privacy Policy</Link></li>
-              <li><Link href="/refund-policy" className="hover:underline">Refund Policy</Link></li>
-              <li><Link href="/shipping-policy" className="hover:underline">Shipping Policy</Link></li>
-              <li><Link href="/tos" className="hover:underline">Terms of Service</Link></li>
-            </ul>
+          <div className="pt-6 border-t border-gray-800 text-center">
+            <p className="text-gray-400 text-xs sm:text-sm">© 2025, Ballerz. Made in India 🇮🇳</p>
           </div>
         </div>
-
-        <div className="pt-8 border-t border-gray-800">
-          <p className="text-gray-400">© 2025, Ballerz. Made in India 🇮🇳</p>
-        </div>
-      </div>
-    </footer>
-  );
+      </footer>
+    );
 }
 
 export default function RootLayout({

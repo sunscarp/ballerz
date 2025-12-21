@@ -93,13 +93,13 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Categories Panel (single row, four columns) */}
+      {/* Categories Panel (2x2 grid on mobile, 1x4 on desktop) */}
       <section className="bg-black text-white px-6 md:px-10 pt-16">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-8">
             Browse By Category
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
             {categories.map(cat => {
               const images: Record<string, string> = {
                 Football: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQs9bNOBl7Rg_JVso6TEMBOfXKhif96T-Nx-g&s",
@@ -114,14 +114,14 @@ export default function Home() {
                   href={`/shop?category=${encodeURIComponent(cat)}`}
                   className="group block rounded-xl overflow-hidden"
                 >
-                  <div className="relative h-[32rem] bg-gray-900 flex items-center justify-center hover:opacity-95 transition">
+                  <div className="relative h-48 md:h-[32rem] bg-gray-900 flex items-center justify-center hover:opacity-95 transition">
                     <img
                       src={imgSrc}
                       alt={cat}
                       className="absolute inset-0 w-full h-full object-cover"
                     />
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-xl md:text-2xl font-bold text-white drop-shadow-lg uppercase tracking-wide text-center px-2">
+                      <span className="text-base md:text-2xl font-bold text-white drop-shadow-lg uppercase tracking-wide text-center px-2">
                         {cat}
                       </span>
                     </div>
@@ -139,24 +139,26 @@ export default function Home() {
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-16">
             Our Top Picks
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-            {products.slice(0, 3).map((p) => (
-              <Link
-                key={p.ID}
-                href={`/product/${encodeURIComponent(p.Description)}`}
-                className="border-2 border-gray-700 bg-gray-900 rounded-xl p-4 font-bold hover:shadow-lg hover:border-gray-500 hover:bg-gray-800 transition text-white flex flex-col items-center"
-              >
-                <div className="aspect-square border border-gray-600 rounded mb-3 overflow-hidden w-full max-w-xs">
-                  <img
-                    src={p.ImageUrl1}
-                    alt={p.Description}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="truncate text-white text-lg mb-1 w-full text-center">{p.Description}</div>
-                <div className="mt-1 text-yellow-400 font-semibold text-center">₹{p.Price}</div>
-              </Link>
-            ))}
+          <div className="overflow-hidden">
+            <div className="flex gap-6 overflow-x-auto scrollbar-hide snap-x snap-mandatory md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-8">
+              {products.slice(0, 6).map((p) => (
+                <Link
+                  key={p.ID}
+                  href={`/product/${encodeURIComponent(p.Description)}`}
+                  className="flex-none w-[280px] md:w-auto border-2 border-gray-700 bg-gray-900 rounded-xl p-4 font-bold hover:shadow-lg hover:border-gray-500 hover:bg-gray-800 transition text-white flex flex-col items-center snap-center"
+                >
+                  <div className="aspect-square border border-gray-600 rounded mb-3 overflow-hidden w-full max-w-xs">
+                    <img
+                      src={p.ImageUrl1}
+                      alt={p.Description}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="truncate text-white text-lg mb-1 w-full text-center">{p.Description}</div>
+                  <div className="mt-1 text-yellow-400 font-semibold text-center">₹{p.Price}</div>
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       </section>

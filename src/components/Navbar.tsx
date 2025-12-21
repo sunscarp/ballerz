@@ -165,16 +165,21 @@ export default function Navbar() {
         />
         {/* Sidebar */}
         <div
-          className={`fixed left-0 z-[60] w-80 bg-white shadow-xl transition-transform duration-300 ease-in-out ${
+          className={`fixed left-0 z-[60] bg-white shadow-xl transition-transform duration-300 ease-in-out ${
             menuOpen ? "translate-x-0" : "-translate-x-full"
           }`}
-          style={{ top: menuTop, height: `calc(100vh - ${menuTop}px)` }}
+          style={{
+            top: menuTop,
+            height: `calc(100vh - ${menuTop}px)`,
+            width: '100vw',
+            maxWidth: '100vw',
+          }}
         >
-          <div className="flex items-center justify-between p-6 border-b border-gray-200">
-            <h2 className="text-xl font-bold text-black">Menu</h2>
+          <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200">
+            <h2 className="text-lg sm:text-xl font-bold text-black">Menu</h2>
             <button
               onClick={() => setMenuOpen(false)}
-              className="p-2 rounded-md hover:bg-gray-100 text-black"
+              className="p-2 rounded-md hover:bg-gray-100 text-black min-w-[44px] min-h-[44px] flex items-center justify-center"
             >
               <svg
                 className="w-6 h-6"
@@ -191,18 +196,18 @@ export default function Navbar() {
               </svg>
             </button>
           </div>
-          <nav className="p-6">
-            <div className="space-y-4">
+          <nav className="p-4 sm:p-6">
+            <div className="space-y-2 sm:space-y-4">
               <Link
                 href="/"
-                className="block py-3 px-4 text-lg text-black hover:bg-gray-100 rounded-md transition-colors"
+                className="block py-3 px-4 text-base sm:text-lg text-black hover:bg-gray-100 rounded-md transition-colors min-h-[48px] flex items-center"
                 onClick={(e) => { e.preventDefault(); setMenuOpen(false); window.location.href = '/'; }}
               >
                 Home
               </Link>
               <Link
                 href="/shop"
-                className="block py-3 px-4 text-lg text-black hover:bg-gray-100 rounded-md transition-colors"
+                className="block py-3 px-4 text-base sm:text-lg text-black hover:bg-gray-100 rounded-md transition-colors min-h-[48px] flex items-center"
                 onClick={(e) => { e.preventDefault(); setMenuOpen(false); window.location.href = '/shop'; }}
               >
                 Shop
@@ -212,7 +217,7 @@ export default function Navbar() {
                   setMenuOpen(false);
                   router.push('/faq');
                 }}
-                className="block w-full text-left py-3 px-4 text-lg text-black hover:bg-gray-100 rounded-md transition-colors"
+                className="block w-full text-left py-3 px-4 text-base sm:text-lg text-black hover:bg-gray-100 rounded-md transition-colors min-h-[48px] flex items-center"
               >
                 FAQ
               </button>
@@ -221,14 +226,14 @@ export default function Navbar() {
               <div className="border-t border-gray-200 pt-4 mt-6">
                 <Link
                   href="#"
-                  className="block py-3 px-4 text-lg text-black hover:bg-gray-100 rounded-md transition-colors"
+                  className="block py-3 px-4 text-base sm:text-lg text-black hover:bg-gray-100 rounded-md transition-colors min-h-[48px] flex items-center"
                   onClick={() => setMenuOpen(false)}
                 >
                   Contact
                 </Link>
                 <Link
                   href="#"
-                  className="block py-3 px-4 text-lg text-black hover:bg-gray-100 rounded-md transition-colors"
+                  className="block py-3 px-4 text-base sm:text-lg text-black hover:bg-gray-100 rounded-md transition-colors min-h-[48px] flex items-center"
                   onClick={() => setMenuOpen(false)}
                 >
                   Shipping Policy
@@ -291,15 +296,15 @@ export default function Navbar() {
         >
           <div className="h-full flex flex-col">
             {/* Search Header */}
-            <div className="flex items-center justify-between p-6 border-b border-gray-200">
-              <h2 className="text-xl font-bold text-black">Search Products</h2>
+            <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200">
+              <h2 className="text-lg sm:text-xl font-bold text-black">Search Products</h2>
               <button
                 onClick={() => {
                   setSearchMenuOpen(false);
                   setSearchQuery("");
                   setSearchResults([]);
                 }}
-                className="p-2 rounded-md hover:bg-gray-100 text-black"
+                className="p-2 rounded-md hover:bg-gray-100 text-black min-w-[44px] min-h-[44px] flex items-center justify-center"
               >
                 <svg
                   className="w-6 h-6"
@@ -318,14 +323,14 @@ export default function Navbar() {
             </div>
 
             {/* Search Input */}
-            <div className="p-6 border-b border-gray-200">
+            <div className="p-4 sm:p-6 border-b border-gray-200">
               <form onSubmit={handleSearchSubmit} className="relative">
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => handleSearchInputChange(e.target.value)}
                   placeholder="Search for..."
-                  className="w-full px-4 py-3 text-lg border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none text-black placeholder-gray-500"
+                  className="w-full px-4 py-3 text-base sm:text-lg border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none text-black placeholder-gray-500"
                   autoFocus
                 />
                 <button
@@ -350,7 +355,7 @@ export default function Navbar() {
             </div>
 
             {/* Search Results */}
-            <div className="flex-1 overflow-y-auto p-6">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6">
               {searchLoading ? (
                 <div className="flex items-center justify-center h-32">
                   <div className="text-lg text-gray-500">Searching...</div>
@@ -369,7 +374,7 @@ export default function Navbar() {
                     <Link
                       key={product.id}
                       href={`/product/${encodeURIComponent(product.Description || product.Product || product.id)}`}
-                      className="flex items-start space-x-4 p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-all cursor-pointer"
+                      className="flex items-start space-x-3 sm:space-x-4 p-3 sm:p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-all cursor-pointer"
                       onClick={() => {
                         setSearchMenuOpen(false);
                         setSearchQuery("");
@@ -380,29 +385,29 @@ export default function Navbar() {
                         <img
                           src={product.ImageUrl1}
                           alt={product.Description || product.Product}
-                          className="w-20 h-20 object-cover rounded-lg border border-gray-200"
+                          className="w-16 sm:w-20 h-16 sm:h-20 object-cover rounded-lg border border-gray-200 flex-shrink-0"
                           onError={(e) => {
                             (e.target as HTMLImageElement).style.display = 'none';
                           }}
                         />
                       )}
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-black text-lg mb-1 truncate">
+                        <h3 className="font-semibold text-black text-base sm:text-lg mb-1 truncate">
                           {product.Description || 'Unnamed Product'}
                         </h3>
                         {product.Product && (
-                          <p className="text-gray-600 text-sm mb-2 truncate">
+                          <p className="text-gray-600 text-xs sm:text-sm mb-2 truncate">
                             {product.Product}
                           </p>
                         )}
-                        <div className="flex items-center justify-between">
-                          <span className="text-lg font-bold text-blue-600">
+                        <div className="flex items-center justify-between flex-wrap gap-2">
+                          <span className="text-base sm:text-lg font-bold text-blue-600">
                             {typeof product.Price === 'number' || !isNaN(Number(product.Price))
                               ? `Rs. ${Number(product.Price).toFixed(2)}`
                               : 'Rs. N/A'}
                           </span>
                           {product.Size && (
-                            <span className="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                            <span className="text-xs sm:text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded">
                               Size: {product.Size}
                             </span>
                           )}
@@ -445,40 +450,68 @@ export default function Navbar() {
         }`}
       >
         {/* Main Navigation */}
-        <div className="flex items-center justify-between px-10 py-4 font-bold text-white">
-          {/* Left - Hamburger Menu */}
-          <div className="relative" id="hamburger-menu">
-            <button
-              onClick={() => setMenuOpen(!menuOpen)}
-              className="p-2 rounded-md hover:bg-gray-800 transition-colors"
-              aria-label="Menu"
-            >
-              <div className="space-y-1">
-                <div className="w-6 h-0.5 bg-white"></div>
-                <div className="w-6 h-0.5 bg-white"></div>
-                <div className="w-6 h-0.5 bg-white"></div>
-              </div>
-            </button>
-          </div>
-
-          {/* Center - Brand Name */}
-          <Link
-            href="/"
-            className="text-2xl font-bold hover:text-gray-300 transition-colors absolute left-1/2 transform -translate-x-1/2"
-            onClick={(e) => { e.preventDefault(); window.location.href = '/'; }}
-          >
-            Ballerz
-          </Link>
-
-          {/* Right - Search, User, Cart */}
-          <div className="flex gap-4 items-center">
-            {/* 🔍 Search */}
-            <div className="flex justify-center relative" id="navbar-search-box">
+        <div className="flex items-center justify-between px-4 sm:px-6 md:px-10 py-3 sm:py-4 font-bold text-white">
+          {/* Mobile/desktop responsive navbar */}
+          <div className="flex w-full items-center justify-between relative min-h-[48px]">
+            {/* Hamburger */}
+            <div className="flex items-center h-full">
               <button
-                type="button"
-                aria-label="Open search"
-                className="p-2 rounded-full hover:bg-gray-800 transition-colors"
-                onClick={() => setSearchMenuOpen(true)}
+                onClick={() => setMenuOpen(!menuOpen)}
+                className="p-2 sm:p-2 md:p-2 rounded-md hover:bg-gray-800 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+                aria-label="Menu"
+              >
+                <div className="space-y-1">
+                  <div className="w-5 sm:w-6 h-0.5 bg-white"></div>
+                  <div className="w-5 sm:w-6 h-0.5 bg-white"></div>
+                  <div className="w-5 sm:w-6 h-0.5 bg-white"></div>
+                </div>
+              </button>
+            </div>
+            {/* Brand Name - vertically centered for mobile */}
+            <div className="flex-1 flex items-center justify-center h-full">
+              <Link
+                href="/"
+                className="text-lg sm:text-xl md:text-2xl font-bold hover:text-gray-300 transition-colors mt-2 sm:mt-0"
+                style={{ lineHeight: '1', paddingTop: '10px', paddingBottom: '2px' }}
+                onClick={(e) => { e.preventDefault(); window.location.href = '/'; }}
+              >
+                Ballerz
+              </Link>
+            </div>
+            {/* Right side: Only show search and cart on mobile */}
+            <div className="flex items-center gap-2 sm:gap-3 md:gap-4 h-full">
+              {/* 🔍 Search */}
+              <div className="flex justify-center relative" id="navbar-search-box">
+                <button
+                  type="button"
+                  aria-label="Open search"
+                  className="p-2 rounded-full hover:bg-gray-800 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+                  onClick={() => setSearchMenuOpen(true)}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-5 sm:w-6 h-5 sm:h-6 text-white"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"
+                    />
+                  </svg>
+                </button>
+              </div>
+              {/* Cart */}
+              <Link
+                href="/cart"
+                className={`relative text-white hover:text-gray-300 transition-all flex items-center justify-center ${
+                  pulse ? "ring-4 ring-blue-300 animate-pulse rounded-full px-2 py-1" : ""
+                }`}
+                style={{ minWidth: '2.5rem', minHeight: '2.5rem' }}
+                onClick={(e) => { e.preventDefault(); window.location.href = '/cart'; }}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -486,103 +519,21 @@ export default function Navbar() {
                   viewBox="0 0 24 24"
                   strokeWidth={1.5}
                   stroke="currentColor"
-                  className="w-6 h-6 text-white"
+                  className="w-6 sm:w-7 h-6 sm:h-7 text-white"
                 >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"
+                    d="M2.25 3h1.386a2.25 2.25 0 012.17 1.684l.298 1.192M6.104 5.876l1.347 5.387m0 0l.298 1.192A2.25 2.25 0 009.92 14.25h6.36a2.25 2.25 0 002.17-1.684l1.386-5.544a1.125 1.125 0 00-1.09-1.422H6.104zm0 0H3.75m16.5 0h-2.25m-6.75 9a1.125 1.125 0 11-2.25 0 1.125 1.125 0 012.25 0zm7.5 0a1.125 1.125 0 11-2.25 0 1.125 1.125 0 012.25 0z"
                   />
                 </svg>
-              </button>
-            </div>
-
-              {/* Inventory button removed for admin users */}
-
-            {!loading && user && (
-              <Dropdown
-                label={
-                  <span className="flex items-center">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={1.5}
-                      stroke="currentColor"
-                      className="w-7 h-7 text-white"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M15.75 7.5a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 19.25a7.25 7.25 0 1115 0v.25a.75.75 0 01-.75.75h-13.5a.75.75 0 01-.75-.75v-.25z"
-                      />
-                    </svg>
+                {totalItems > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-600 text-xs rounded-full px-1.5 py-0.5 font-bold">
+                    {totalItems}
                   </span>
-                }
-              >
-                <Link
-                  href="/orders"
-                  className="block px-4 py-2 text-sm text-white hover:bg-gray-800 transition-colors"
-                  onClick={(e) => { e.preventDefault(); window.location.href = '/orders'; }}
-                >
-                  Orders
-                </Link>
-                <button
-                  onClick={handleSignOut}
-                  className="block w-full text-left px-4 py-2 text-sm text-white hover:bg-gray-800 transition-colors"
-                >
-                  Sign Out
-                </button>
-              </Dropdown>
-            )}
-
-            {!loading && !user && (
-              <>
-                <Link
-                  href="/sign-in"
-                  className="text-white hover:text-gray-300 transition-colors"
-                  onClick={(e) => { e.preventDefault(); window.location.href = '/sign-in'; }}
-                >
-                  Sign In
-                </Link>
-                <Link
-                  href="/sign-up"
-                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-                  onClick={(e) => { e.preventDefault(); window.location.href = '/sign-up'; }}
-                >
-                  Sign Up
-                </Link>
-              </>
-            )}
-
-            <Link
-              href="/cart"
-              className={`relative text-white hover:text-gray-300 transition-all flex items-center justify-center ${
-                pulse ? "ring-4 ring-blue-300 animate-pulse rounded-full px-2 py-1" : ""
-              }`}
-              style={{ minWidth: '2.5rem', minHeight: '2.5rem' }}
-              onClick={(e) => { e.preventDefault(); window.location.href = '/cart'; }}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-7 h-7 text-white"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M2.25 3h1.386a2.25 2.25 0 012.17 1.684l.298 1.192M6.104 5.876l1.347 5.387m0 0l.298 1.192A2.25 2.25 0 009.92 14.25h6.36a2.25 2.25 0 002.17-1.684l1.386-5.544a1.125 1.125 0 00-1.09-1.422H6.104zm0 0H3.75m16.5 0h-2.25m-6.75 9a1.125 1.125 0 11-2.25 0 1.125 1.125 0 012.25 0zm7.5 0a1.125 1.125 0 11-2.25 0 1.125 1.125 0 012.25 0z"
-                />
-              </svg>
-              {totalItems > 0 && (
-                <span className="absolute -top-1 -right-1 bg-red-600 text-xs rounded-full px-1.5 py-0.5 font-bold">
-                  {totalItems}
-                </span>
-              )}
-            </Link>
+                )}
+              </Link>
+            </div>
           </div>
         </div>
 
