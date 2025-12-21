@@ -18,6 +18,7 @@ export default function ShopPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [filter, setFilter] = useState<string | null>(null);
   const [sort, setSort] = useState<string>("relevance");
+  const [showFilterPopover, setShowFilterPopover] = useState(false);
   const params = useSearchParams();
   const search = params.get("search")?.toLowerCase() || "";
 
@@ -50,53 +51,86 @@ export default function ShopPage() {
     return s;
   })();
 
-  const categories = Array.from(new Set(products.map(p => p.Product)));
+  const defaultCategories = ["Football", "Basketball", "Anime", "Korean"];
+  const categories = Array.from(new Set([...defaultCategories, ...products.map(p => p.Product)]));
+
+  // when arriving with ?category=..., apply it
+  useEffect(() => {
+    try {
+      const cat = params.get("category");
+      if (cat) setFilter(cat);
+    } catch (e) {
+      // ignore
+    }
+  }, [params]);
 
   return (
     <div className="bg-white min-h-screen">
       <main className="px-4 py-8 max-w-6xl mx-auto">
-        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-4">
-          <div className="flex gap-4 items-center w-full sm:w-auto">
-            <div className="relative inline-block w-full sm:w-auto">
-              <select
-                value={filter ?? ""}
-                onChange={e => setFilter(e.target.value || null)}
-                aria-label="Filter categories"
-                className="appearance-none w-full sm:w-auto pl-4 pr-10 py-2 bg-white border border-gray-200 text-gray-900 rounded-md font-light cursor-pointer focus:outline-none focus:ring-2 focus:ring-black"
-              >
-                <option value="">All Categories</option>
-                {categories.map(c => (
-                  <option key={c} value={c}>{c}</option>
-                ))}
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-2 flex items-center">
-                <svg className="w-4 h-4 text-gray-700" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
-                  <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z" clipRule="evenodd" />
-                </svg>
-              </div>
-            </div>
-
-            <div className="relative inline-block w-full sm:w-auto">
-              <select
-                onChange={e => setSort(e.target.value)}
-                value={sort}
-                aria-label="Sort products"
-                className="appearance-none w-full sm:w-auto pl-4 pr-10 py-2 bg-white border border-gray-200 text-gray-900 rounded-md font-light cursor-pointer focus:outline-none focus:ring-2 focus:ring-black"
-              >
-                <option value="relevance">Sort: Relevance</option>
-                <option value="price-asc">Price: Low to High</option>
-                <option value="price-desc">Price: High to Low</option>
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-2 flex items-center">
-                <svg className="w-4 h-4 text-gray-700" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
-                  <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z" clipRule="evenodd" />
-                </svg>
-              </div>
-            </div>
-          </div>
-
+        <div className="mb-4">
           <div className="text-sm text-gray-400">Showing {sorted.length} products</div>
         </div>
+
+          {/* Floating filter button */}
+          <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-[9999]">
+          <button
+            onClick={() => setShowFilterPopover((s) => !s)}
+            aria-expanded={showFilterPopover}
+            aria-controls="filter-popover"
+            className="flex items-center gap-1 bg-yellow-400 text-black px-3 py-2 rounded-full shadow-lg hover:opacity-95 cursor-pointer ring-4 ring-yellow-300 sm:bg-black sm:text-white sm:ring-0 sm:px-4 sm:py-2 border-black/10"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="w-5 h-5">
+              <path strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M10 12h4M6 18h12" />
+            </svg>
+            <span className="text-sm">Filter</span>
+          </button>
+
+          {showFilterPopover && (
+            <div id="filter-popover" className="absolute bottom-16 left-1/2 transform -translate-x-1/2 bg-white rounded-lg shadow-lg p-4 w-[90vw] sm:w-72 z-[9999]">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="text-sm font-semibold">Filters</div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => { setFilter(null); setSort("relevance"); }}
+                      className="text-sm bg-gray-100 text-gray-800 px-2 py-1 rounded cursor-pointer hover:bg-gray-200"
+                    >
+                      Reset
+                    </button>
+                    <button onClick={() => setShowFilterPopover(false)} className="text-gray-500 text-sm cursor-pointer">Close</button>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <div>
+                    <label className="text-xs text-gray-600 mb-1 block">Category</label>
+                    <select
+                      value={filter ?? ""}
+                      onChange={(e) => setFilter(e.target.value || null)}
+                      className="appearance-none cursor-pointer w-full pl-3 pr-8 py-2 bg-gray-100 border border-gray-300 text-gray-900 rounded-md font-medium focus:outline-none focus:ring-2 focus:ring-black"
+                    >
+                      <option value="">All Categories</option>
+                      {categories.map(c => (
+                        <option key={c} value={c}>{c}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="text-xs text-gray-600 mb-1 block">Sort</label>
+                    <select
+                      value={sort}
+                      onChange={e => setSort(e.target.value)}
+                      className="appearance-none cursor-pointer w-full pl-3 pr-8 py-2 bg-gray-100 border border-gray-300 text-gray-900 rounded-md font-medium focus:outline-none focus:ring-2 focus:ring-black"
+                    >
+                      <option value="relevance">Sort: Relevance</option>
+                      <option value="price-asc">Price: Low to High</option>
+                      <option value="price-desc">Price: High to Low</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
 
         {/* Filters toolbar removed */}
 

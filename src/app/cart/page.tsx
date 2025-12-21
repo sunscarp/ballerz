@@ -70,7 +70,22 @@ export default function CartPage() {
   const [items, setItems] = useState<CartItem[]>([]);
   const [loadingItems, setLoadingItems] = useState(true);
   const [inventoryMap, setInventoryMap] = useState<Record<string, any>>({});
+  const [suggestions, setSuggestions] = useState<any[]>([]);
 
+  const [isMobile, setIsMobile] = useState<boolean>(false);
+
+  useEffect(() => {
+    function handleResize() {
+      try {
+        setIsMobile(typeof window !== "undefined" ? window.innerWidth < 768 : false);
+      } catch (e) {
+        setIsMobile(false);
+      }
+    }
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // Firestore subscription for logged-in users
   useEffect(() => {
@@ -113,6 +128,28 @@ export default function CartPage() {
   useEffect(() => {
     if (!items || items.length === 0) {
       setInventoryMap({});
+      // when cart is empty, fetch a few suggested t-shirts
+      (async function fetchSuggestions() {
+        try {
+          const snap = await getDocs(collection(db, "inventory"));
+          const all = snap.docs.map(d => ({ ...d.data(), _docId: d.id }));
+          const tshirts = all.filter(p => {
+            const name = String((p.Product || p.Description || "")).toLowerCase();
+            const cat = String(p?.Category || "").toLowerCase();
+            return name.includes("tshirt") || name.includes("t-shirt") || name.includes("tee") || cat.includes("tshirt") || cat.includes("tee");
+          });
+          const pool = (tshirts && tshirts.length > 0) ? tshirts : all;
+          // pick up to 3 random items
+          for (let i = pool.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [pool[i], pool[j]] = [pool[j], pool[i]];
+          }
+          setSuggestions(pool.slice(0, 3));
+        } catch (e) {
+          console.error("Failed loading suggestions:", e);
+          setSuggestions([]);
+        }
+      })();
       return;
     }
 
@@ -198,6 +235,25 @@ export default function CartPage() {
     persistGuest(next);
   }
 
+  async function changeSize(item: CartItem, newSize: string) {
+    try {
+      if (user && item.docId) {
+        const ref = firestoreDoc(db, "Cart", item.docId);
+        await updateDoc(ref, { Size: newSize });
+        // optimistically update local state
+        setItems((prev) => prev.map((it) => (String(it.ID) === String(item.ID) ? { ...it, Size: newSize } : it)));
+        return;
+      }
+
+      // guest: update cookie
+      const next = items.map((it) => (String(it.ID) === String(item.ID) ? { ...it, Size: newSize } : it));
+      setItems(next);
+      persistGuest(next);
+    } catch (e) {
+      console.error("Failed to change size:", e);
+    }
+  }
+
   if (loading || loadingItems) {
     return <div className="px-4 py-8">Loading cart…</div>;
   }
@@ -217,8 +273,48 @@ export default function CartPage() {
 
       {items.length === 0 ? (
         <div className="mt-6">
-          <p>Your cart is empty.</p>
-          <Link href="/" className="mt-4 inline-block text-blue-400 font-semibold">Continue shopping</Link>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <h2 className="text-xl font-semibold text-gray-900">Why is your bag empty. Pick something up we have loads to choose from.</h2>
+              
+            </div>
+            
+          </div>
+
+          <div className="mt-6">
+            {suggestions && suggestions.length > 0 ? (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 gap-4">
+                {suggestions.map((p: any) => {
+                  const oldPrice = (p as any).OldPrice ?? (p as any).MSRP ?? null;
+                  const soldOut = !!(p as any).SoldOut;
+                  const savePct = oldPrice && oldPrice > p.Price ? Math.round(((oldPrice - p.Price) / oldPrice) * 100) : null;
+                  return (
+                    <Link key={p._docId ?? p.ID} href={`/product/${encodeURIComponent(String(p.Description || p.Product || p.ID))}`} className="block relative p-0 font-light hover:shadow-sm transition-colors hover:-translate-y-0.5 cursor-pointer overflow-hidden">
+                      {soldOut && (<span className="absolute top-3 left-3 bg-gray-100 text-gray-800 text-xs font-semibold px-3 py-1 rounded-full">Sold out</span>)}
+                      {savePct && !soldOut && (<span className="absolute top-3 left-3 bg-black text-white text-xs font-semibold px-3 py-1 rounded-full">Save {savePct}%</span>)}
+                      <div className="w-full overflow-hidden h-36 md:aspect-square md:h-auto">
+                        <img src={p.ImageUrl1 || p.ImageUrl2 || p.ImageUrl3 || "/favicon.ico"} alt={p.Description} className="w-full h-full object-cover" />
+                      </div>
+
+                      <div className="py-2 px-1">
+                        <h3 className="text-sm md:text-lg lg:text-xl font-semibold text-gray-900 leading-tight">{p.Description || p.Product}</h3>
+                        <div className="mt-2 flex items-baseline gap-3">
+                          <div className="text-sm md:text-lg font-light text-gray-900">{formatCurrency(Number(p.Price || 0))}</div>
+                          {oldPrice && oldPrice > p.Price && (<div className="text-sm text-gray-500 line-through">{formatCurrency(Number(oldPrice))}</div>)}
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="mt-4 text-gray-600">No suggestions available. <Link href="/shop" className="text-blue-600 font-semibold">Browse the shop</Link></div>
+            )}
+          </div>
+
+          <div className="mt-6 flex justify-center">
+            <Link href="/shop" className="bg-black text-white px-4 py-2 rounded font-semibold hover:opacity-95">Go to shop</Link>
+          </div>
         </div>
       ) : (
         <>
@@ -229,45 +325,56 @@ export default function CartPage() {
             const img = prod?.ImageUrl1 || prod?.ImageUrl2 || prod?.ImageUrl3 || "/favicon.ico";
             return (
               <li key={String(it.docId ?? it.ID)} className="flex flex-col md:flex-row items-start md:items-center justify-between border border-black/10 p-4 rounded bg-white shadow-sm">
-                  <Link
-                    href={`/product/${encodeURIComponent(String(prod?.Description || prod?.Product || key))}`}
-                    className="flex flex-col md:flex-row gap-4 items-start md:items-center flex-1 hover:bg-gray-50 rounded-md p-1 transition cursor-pointer"
-                  >
                   <div className="flex items-start gap-4 w-full">
-                    <img src={img} alt={prod?.Product ?? `item-${key}`} className="w-20 h-20 md:w-28 md:h-20 object-cover rounded flex-shrink-0" />
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between">
-                        <p className="text-lg font-semibold text-gray-900">{prod?.Product ?? `Item ${key}`}</p>
+                    <Link
+                      href={`/product/${encodeURIComponent(String(prod?.Description || prod?.Product || key))}`}
+                      className="flex-shrink-0 hover:bg-gray-50 rounded-md p-1 transition cursor-pointer"
+                    >
+                      <img src={img} alt={prod?.Product ?? `item-${key}`} className="w-20 h-20 md:w-28 md:h-20 object-cover rounded" />
+                    </Link>
+
+                    <div className="flex-1 flex items-start md:items-center gap-4">
+                      <div className="flex-1">
+                        {it.isCustomized && (
+                          <div className="mt-1 p-2 bg-gray-50 rounded border border-black/5">
+                            <p className="text-sm font-medium text-gray-800">Customized: "{it.customizationText}"</p>
+                            {it.customPrice && (
+                              <p className="text-xs text-blue-600">+{formatCurrency(it.customPrice)} customization fee</p>
+                            )}
+                          </div>
+                        )}
+
+                        <p
+                          className="text-sm font-semibold text-gray-900 mt-2"
+                          style={!isMobile ? { display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' } : undefined}
+                        >
+                          {prod?.Description}
+                        </p>
                       </div>
-                      <div className="mt-1 space-y-1">
-                        {it.Size && <p className="text-sm font-semibold text-gray-700">Size: {it.Size}</p>}
-                        <p className="text-sm text-gray-600">Quantity: {it.Quantity}</p>
+
+                      <div className="w-40 flex-shrink-0">
+                        <div className="flex flex-col items-start md:items-end gap-2">
+                          <div className="flex items-center gap-3">
+                            <label className="text-sm font-semibold text-gray-700">Size:</label>
+                            <select
+                              value={it.Size ?? ""}
+                              onChange={(e) => changeSize(it, e.target.value)}
+                              className="w-16 sm:w-20 pl-2 pr-3 py-1 bg-white border border-gray-200 text-gray-900 rounded-md text-sm max-w-full"
+                              aria-label="Select size"
+                            >
+                              <option value="">Select</option>
+                              <option value="S">S</option>
+                              <option value="M">M</option>
+                              <option value="L">L</option>
+                              <option value="XL">XL</option>
+                            </select>
+                          </div>
+
+                          <p className="text-sm text-gray-600">Quantity: {it.Quantity}</p>
+                        </div>
                       </div>
                     </div>
                   </div>
-
-                  {/* description and metadata below */}
-                    <div className="w-full mt-3">
-                    {it.isCustomized && (
-                      <div className="mt-1 p-2 bg-gray-50 rounded border border-black/5">
-                        <p className="text-sm font-medium text-gray-800">
-                          Customized: "{it.customizationText}"
-                        </p>
-                        {it.customPrice && (
-                          <p className="text-xs text-blue-600">
-                            +{formatCurrency(it.customPrice)} customization fee
-                          </p>
-                        )}
-                      </div>
-                    )}
-
-                    <p className="text-sm text-gray-700 leading-6 mt-2">{prod?.Description}</p>
-                    {(() => {
-                      const addedOn = (it as any)["Added On"] ?? (it as any).AddedOn ?? (it as any).addedOn ?? (it as any).AddedOnTimestamp ?? (it as any).AddedOnDate;
-                      return addedOn ? <p className="text-sm text-gray-500 mt-2">Added on: {formatDateOnly(addedOn)}</p> : null;
-                    })()}
-                  </div>
-                </Link>
                 <div className="flex flex-row md:flex-col items-center md:items-end gap-2 mt-3 md:mt-0 md:ml-4">
                   {(() => {
                     const basePrice = prod?.Price != null ? Number(prod.Price) : null;
@@ -293,7 +400,11 @@ export default function CartPage() {
                     <div className="flex gap-2">
                       <button onClick={() => changeQuantity(it, -1)} className="px-3 py-2 border border-gray-300 rounded bg-white text-gray-800 hover:bg-gray-50 cursor-pointer w-full md:w-auto">-</button>
                       <button onClick={() => changeQuantity(it, +1)} className="px-3 py-2 border border-gray-300 rounded bg-white text-gray-800 hover:bg-gray-50 cursor-pointer w-full md:w-auto">+</button>
-                      <button onClick={() => removeItem(it)} className="px-3 py-2 border border-red-300 rounded bg-white text-red-600 hover:bg-red-50 cursor-pointer w-full md:w-auto">Remove</button>
+                      <button onClick={() => removeItem(it)} aria-label="Remove item" className="flex items-center justify-center w-12 h-12 sm:w-12 sm:h-12 md:w-10 md:h-10 border border-gray-200 rounded bg-white text-red-600 hover:bg-red-50 cursor-pointer">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 sm:w-6 sm:h-6 md:w-4 md:h-4">
+                          <path fillRule="evenodd" d="M9.5 3a1 1 0 00-1 1v1H6a1 1 0 000 2h12a1 1 0 100-2h-2.5V4a1 1 0 00-1-1h-4zM7 8a1 1 0 011 1v9a2 2 0 002 2h4a2 2 0 002-2V9a1 1 0 112 0v9a4 4 0 01-4 4h-4a4 4 0 01-4-4V9a1 1 0 011-1z" clipRule="evenodd" />
+                        </svg>
+                      </button>
                     </div>
                 </div>
               </li>
