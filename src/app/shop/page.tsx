@@ -73,8 +73,8 @@ function ShopContent() {
           <div className="text-sm text-gray-400">Showing {sorted.length} products</div>
         </div>
 
-          {/* Floating filter button */}
-          <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-[9999]">
+        {/* Mobile floating filter button (hidden on desktop) */}
+        <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-[9999] md:hidden">
           <button
             onClick={() => setShowFilterPopover((s) => !s)}
             aria-expanded={showFilterPopover}
@@ -184,7 +184,159 @@ function ShopContent() {
             )}
           </div>
 
-        {/* Filters toolbar removed */}
+        {/* Desktop filter toolbar (top-left) */}
+        <div className="hidden md:flex items-center gap-4 mb-6">
+          <div className="text-sm text-gray-500">Filters:</div>
+
+          {/* Category dropdown */}
+          <div className="relative">
+            <button
+              onClick={() => setCategoryOpen((c) => !c)}
+              className="flex items-center gap-2 text-sm bg-gray-100 text-gray-800 px-3 py-2 rounded-full hover:bg-gray-200 cursor-pointer"
+              aria-expanded={categoryOpen}
+            >
+              <span>Category</span>
+              <span className="text-xs text-gray-500 max-w-[160px] truncate">
+                {filter ?? "All Categories"}
+              </span>
+              <svg
+                className={`w-4 h-4 transform ${categoryOpen ? "rotate-180" : "rotate-0"}`}
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+              >
+                <path
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6 9l6 6 6-6"
+                />
+              </svg>
+            </button>
+
+            {categoryOpen && (
+              <div className="absolute mt-2 left-0 bg-white border border-gray-100 rounded-md shadow-lg p-2 w-56 max-h-56 overflow-auto z-30">
+                <button
+                  onClick={() => {
+                    setFilter(null);
+                    setCategoryOpen(false);
+                  }}
+                  className={`w-full text-left px-2 py-1 rounded-md text-sm ${
+                    filter === null
+                      ? "bg-black text-white"
+                      : "text-gray-800 hover:bg-gray-100"
+                  }`}
+                >
+                  All Categories
+                </button>
+                {categories.map((c) => (
+                  <button
+                    key={c}
+                    onClick={() => {
+                      setFilter(c);
+                      setCategoryOpen(false);
+                    }}
+                    className={`w-full text-left px-2 py-1 mt-1 rounded-md text-sm ${
+                      filter === c
+                        ? "bg-black text-white"
+                        : "text-gray-800 hover:bg-gray-100"
+                    }`}
+                  >
+                    {c}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Sort dropdown */}
+          <div className="relative">
+            <button
+              onClick={() => setSortOpen((s) => !s)}
+              className="flex items-center gap-2 text-sm bg-gray-100 text-gray-800 px-3 py-2 rounded-full hover:bg-gray-200 cursor-pointer"
+              aria-expanded={sortOpen}
+            >
+              <span>Sort</span>
+              <span className="text-xs text-gray-500">
+                {sort === "price-asc"
+                  ? "Price: Low to High"
+                  : sort === "price-desc"
+                  ? "Price: High to Low"
+                  : "Relevance"}
+              </span>
+              <svg
+                className={`w-4 h-4 transform ${sortOpen ? "rotate-180" : "rotate-0"}`}
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+              >
+                <path
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6 9l6 6 6-6"
+                />
+              </svg>
+            </button>
+
+            {sortOpen && (
+              <div className="absolute mt-2 left-0 bg-white border border-gray-100 rounded-md shadow-lg p-2 w-56 z-30">
+                <button
+                  onClick={() => {
+                    setSort("relevance");
+                    setSortOpen(false);
+                  }}
+                  className={`w-full text-left px-2 py-1 rounded-md text-sm ${
+                    sort === "relevance"
+                      ? "bg-black text-white"
+                      : "text-gray-800 hover:bg-gray-100"
+                  }`}
+                >
+                  Relevance
+                </button>
+                <button
+                  onClick={() => {
+                    setSort("price-asc");
+                    setSortOpen(false);
+                  }}
+                  className={`w-full text-left px-2 py-1 mt-1 rounded-md text-sm ${
+                    sort === "price-asc"
+                      ? "bg-black text-white"
+                      : "text-gray-800 hover:bg-gray-100"
+                  }`}
+                >
+                  Price: Low to High
+                </button>
+                <button
+                  onClick={() => {
+                    setSort("price-desc");
+                    setSortOpen(false);
+                  }}
+                  className={`w-full text-left px-2 py-1 mt-1 rounded-md text-sm ${
+                    sort === "price-desc"
+                      ? "bg-black text-white"
+                      : "text-gray-800 hover:bg-gray-100"
+                  }`}
+                >
+                  Price: High to Low
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Reset button */}
+          <button
+            onClick={() => {
+              setFilter(null);
+              setSort("relevance");
+            }}
+            className="ml-2 text-sm text-gray-600 hover:text-black underline-offset-4 hover:underline"
+          >
+            Reset
+          </button>
+        </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {sorted.map(p => {
