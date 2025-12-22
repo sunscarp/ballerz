@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import FAQModal from "@/components/FAQModal";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -12,7 +12,7 @@ import { useAdmin } from "@/hooks/useAdmin";
 import Dropdown from "@/components/Dropdown";
 import { collection, query, where, getDocs } from "firebase/firestore";
 
-export default function Navbar() {
+function NavbarContent() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -706,5 +706,13 @@ export default function Navbar() {
         <FAQModal open={faqOpen} onClose={() => setFaqOpen(false)} />
       </header>
     </>
+  );
+}
+
+export default function Navbar() {
+  return (
+    <Suspense fallback={<header className="bg-white shadow-md h-16"></header>}>
+      <NavbarContent />
+    </Suspense>
   );
 }

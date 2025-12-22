@@ -132,8 +132,8 @@ export default function CartPage() {
       (async function fetchSuggestions() {
         try {
           const snap = await getDocs(collection(db, "inventory"));
-          const all = snap.docs.map(d => ({ ...d.data(), _docId: d.id }));
-          const tshirts = all.filter(p => {
+          const all = snap.docs.map(d => ({ ...d.data(), _docId: d.id })) as any[];
+          const tshirts = all.filter((p: any) => {
             const name = String((p.Product || p.Description || "")).toLowerCase();
             const cat = String(p?.Category || "").toLowerCase();
             return name.includes("tshirt") || name.includes("t-shirt") || name.includes("tee") || cat.includes("tshirt") || cat.includes("tee");

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/firebase";
 import Link from "next/link";
@@ -14,7 +14,7 @@ type Product = {
   Product: string;
 };
 
-export default function ShopPage() {
+function ShopContent() {
   const [products, setProducts] = useState<Product[]>([]);
   const [filter, setFilter] = useState<string | null>(null);
   const [sort, setSort] = useState<string>("relevance");
@@ -211,5 +211,12 @@ export default function ShopPage() {
         </div>
       </main>
     </div>
+  );
+}
+export default function ShopPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gray-100 flex items-center justify-center">Loading...</div>}>
+      <ShopContent />
+    </Suspense>
   );
 }
