@@ -355,7 +355,7 @@ export default function CartPage() {
                             <select
                               value={it.Size ?? "S"}
                               onChange={(e) => changeSize(it, e.target.value)}
-                              className="w-14 xs:w-16 sm:w-20 pl-2 pr-5 py-[3px] bg-white border border-gray-200 text-gray-900 rounded-md text-[11px] sm:text-xs md:text-sm max-w-full"
+                              className="w-20 sm:w-24 md:w-20 pl-2 pr-4 py-[3px] bg-white border border-gray-200 text-gray-900 rounded-md text-[11px] sm:text-xs md:text-sm max-w-full"
                               aria-label="Select size"
                             >
                               <option value="S">S</option>
@@ -453,7 +453,7 @@ export default function CartPage() {
                     <button
                       onClick={() => addToCart(p, 1)}
                       disabled={!!addingMap[String(p._docId ?? p.ID)]}
-                      className="bg-black text-white px-4 py-2 rounded-md text-sm font-semibold whitespace-nowrap"
+                      className="bg-black text-white px-3 py-1.5 md:px-4 md:py-2 rounded-md text-xs sm:text-sm font-semibold whitespace-nowrap ml-auto"
                     >
                       + Add
                     </button>
