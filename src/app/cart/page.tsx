@@ -319,7 +319,7 @@ export default function CartPage() {
                         />
                       </Link>
 
-                      <div className="flex-1 flex items-start md:items-center gap-3">
+                      <div className="flex-1 flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-3">
                         <div className="flex-1 min-w-0">
                           {it.isCustomized && (
                             <div className="mt-1 p-2 bg-gray-50 rounded border border-black/5">
@@ -347,15 +347,15 @@ export default function CartPage() {
                           </p>
                         </div>
 
-                        <div className="flex flex-col items-start md:items-start gap-1 min-w-[120px]">
+                        <div className="flex flex-col items-start md:items-start gap-1 w-full md:w-auto md:min-w-[120px]">
                           <div className="flex items-center gap-2">
-                            <label className="text-sm font-semibold text-gray-700">
+                            <label className="text-xs sm:text-sm font-semibold text-gray-700">
                               Size:
                             </label>
                             <select
                               value={it.Size ?? "S"}
                               onChange={(e) => changeSize(it, e.target.value)}
-                              className="w-16 sm:w-20 pl-2 pr-6 py-1 bg-white border border-gray-200 text-gray-900 rounded-md text-xs sm:text-sm max-w-full"
+                              className="w-14 xs:w-16 sm:w-20 pl-2 pr-5 py-[3px] bg-white border border-gray-200 text-gray-900 rounded-md text-[11px] sm:text-xs md:text-sm max-w-full"
                               aria-label="Select size"
                             >
                               <option value="S">S</option>
@@ -385,26 +385,26 @@ export default function CartPage() {
                       <div className="flex gap-2 mt-1">
                         <button
                           onClick={() => changeQuantity(it, -1)}
-                          className="px-4 py-2 border border-gray-300 rounded-md bg-white text-gray-800 hover:bg-gray-50 cursor-pointer text-sm"
+                          className="px-3 md:px-4 py-1.5 md:py-2 border border-gray-300 rounded-md bg-white text-gray-800 hover:bg-gray-50 cursor-pointer text-xs md:text-sm"
                         >
                           -
                         </button>
                         <button
                           onClick={() => changeQuantity(it, +1)}
-                          className="px-4 py-2 border border-gray-300 rounded-md bg-white text-gray-800 hover:bg-gray-50 cursor-pointer text-sm"
+                          className="px-3 md:px-4 py-1.5 md:py-2 border border-gray-300 rounded-md bg-white text-gray-800 hover:bg-gray-50 cursor-pointer text-xs md:text-sm"
                         >
                           +
                         </button>
                         <button
                           onClick={() => removeItem(it)}
                           aria-label="Remove item"
-                          className="flex items-center justify-center w-10 h-10 sm:w-10 sm:h-10 md:w-9 md:h-9 border border-gray-200 rounded-md bg-white text-red-600 hover:bg-red-50 cursor-pointer"
+                          className="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 md:w-9 md:h-9 border border-gray-200 rounded-md bg-white text-red-600 hover:bg-red-50 cursor-pointer"
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 24 24"
                             fill="currentColor"
-                            className="w-6 h-6 sm:w-6 sm:h-6 md:w-4 md:h-4"
+                            className="w-4 h-4 sm:w-5 sm:h-5 md:w-4 md:h-4"
                           >
                             <path
                               fillRule="evenodd"

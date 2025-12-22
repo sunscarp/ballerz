@@ -179,7 +179,7 @@ if (storedBuyNow) {
     setIsBuyNow(false);
 
     if (user && user.email) {
-      const colRef = collection(db, "Cart");
+      const colRef = collection(db!, "Cart");
       const q = query(colRef, where("UserMail", "==", user.email));
       unsub = onSnapshot(q, (snap) => {
         const rows: CartItem[] = snap.docs.map((d) => ({ docId: d.id, ...(d.data() as any) }));
@@ -219,7 +219,7 @@ if (storedBuyNow) {
       const map: Record<string, any> = {};
       for (const chunk of chunks) {
         try {
-          const q = query(collection(db, "inventory"), where("ID", "in", chunk));
+          const q = query(collection(db!, "inventory"), where("ID", "in", chunk));
           const snap = await getDocs(q);
           snap.docs.forEach((d) => {
             const data = d.data();
@@ -228,7 +228,7 @@ if (storedBuyNow) {
           });
         } catch (e) {
           try {
-            const allSnap = await getDocs(collection(db, "inventory"));
+            const allSnap = await getDocs(collection(db!, "inventory"));
             allSnap.docs.forEach((d) => {
               const data = d.data();
               const key = String(data?.ID ?? d.id);
@@ -327,7 +327,7 @@ if (storedBuyNow) {
             createdAt: serverTimestamp(),
           };
 
-          const orderRef = await addDoc(collection(db, "Orders"), finalOrderData);
+          const orderRef = await addDoc(collection(db!, "Orders"), finalOrderData);
           setOrderDetails({ ...finalOrderData, orderId: orderRef.id });
           setOrderStatus("success");
 
@@ -342,7 +342,7 @@ if (storedBuyNow) {
                 const cartItemsToDelete = items.filter(item => item.docId);
                 await Promise.all(
                   cartItemsToDelete.map(item => 
-                    deleteDoc(firestoreDoc(db, "Cart", item.docId!))
+                    deleteDoc(firestoreDoc(db!, "Cart", item.docId!))
                   )
                 );
 
@@ -649,7 +649,7 @@ if (storedBuyNow) {
                       onClick={async () => {
                         setDiscountCodeStatus("checking");
                         try {
-                          const q = query(collection(db, "discount-code"), where("Code", "==", discountCode));
+                          const q = query(collection(db!, "discount-code"), where("Code", "==", discountCode));
                           const snap = await getDocs(q);
                           if (!snap.empty) {
                             const doc = snap.docs[0].data();
