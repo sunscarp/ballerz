@@ -32,7 +32,8 @@ export default function Home() {
   // Fetch inventory
   useEffect(() => {
     const fetchProducts = async () => {
-      const snap = await getDocs(collection(db, "inventory"));
+      if (!db) return;
+      const snap = await getDocs(collection(db!, "inventory"));
       setProducts(snap.docs.map(d => d.data() as Product));
     };
     fetchProducts();

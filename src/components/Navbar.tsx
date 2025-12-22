@@ -109,7 +109,13 @@ function NavbarContent() {
 
     setSearchLoading(true);
     try {
-      const inventoryRef = collection(db, "inventory");
+      if (!db) {
+        setSearchResults([]);
+        setSearchLoading(false);
+        return;
+      }
+
+      const inventoryRef = collection(db!, "inventory");
       const q = query(inventoryRef);
       const querySnapshot = await getDocs(q);
       
@@ -146,6 +152,7 @@ function NavbarContent() {
   };
 
   const handleSignOut = async () => {
+    if (!auth) return;
     await signOut(auth);
   };
 

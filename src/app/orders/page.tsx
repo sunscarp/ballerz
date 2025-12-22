@@ -64,10 +64,10 @@ export default function OrdersPage() {
 
   /* 🔥 Fetch orders */
   useEffect(() => {
-    if (!user?.email) return;
+    if (!user?.email || !db) return;
 
     const q = query(
-      collection(db, "Orders"),
+      collection(db!, "Orders"),
       where("userEmail", "==", user.email),
       orderBy("createdAt", "desc")
     );
@@ -86,9 +86,9 @@ export default function OrdersPage() {
 
   /* 🛒 Buy again */
   const handleBuyAgain = async (items: OrderItem[]) => {
-    if (!user?.email) return;
+    if (!user?.email || !db) return;
 
-    const cartRef = collection(db, "Cart");
+    const cartRef = collection(db!, "Cart");
 
     for (const item of items) {
       const baseData = {

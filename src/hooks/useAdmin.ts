@@ -8,7 +8,7 @@ export function useAdmin(user: User | null) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) {
+    if (!user || !db) {
       setIsAdmin(false);
       setLoading(false);
       return;
@@ -16,7 +16,7 @@ export function useAdmin(user: User | null) {
     setLoading(true);
     const checkAdmin = async () => {
       try {
-        const userRef = doc(db, "users", user.uid);
+        const userRef = doc(db!, "users", user.uid);
         const userSnap = await getDoc(userRef);
         if (userSnap.exists() && userSnap.data().role === "admin") {
           setIsAdmin(true);
