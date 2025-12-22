@@ -43,10 +43,10 @@ export default function ProductPage() {
   // Fetch product
   useEffect(() => {
     const fetchProduct = async () => {
-      if (!description) return;
+      if (!description || !db) return;
 
       const q = query(
-        collection(db, "inventory"),
+        collection(db!, "inventory"),
         where("Description", "==", decodeURIComponent(description as string))
       );
 
@@ -63,11 +63,11 @@ export default function ProductPage() {
 
   // Fetch related products
   useEffect(() => {
-    if (!product) return;
+    if (!product || !db) return;
 
     const fetchRelated = async () => {
       const q = query(
-        collection(db, "inventory"),
+        collection(db!, "inventory"),
         where("Product", "==", product.Product)
       );
 
@@ -112,12 +112,12 @@ export default function ProductPage() {
     setImageIndex((prev) => (prev - 1 + images.length) % images.length);
 
   const handleAddToCart = async () => {
-    if (!user?.email) {
+    if (!user?.email || !db) {
       router.push("/sign-in");
       return;
     }
 
-    const cartRef = collection(db, "Cart");
+    const cartRef = collection(db!, "Cart");
 
     const q = query(
       cartRef,
