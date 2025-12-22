@@ -1,5 +1,4 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
@@ -13,12 +12,11 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
-// Initialize app once
+// Initialize app once (safe on server)
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
-// Exports for app, analytics (browser-only), firestore db and auth
-const analytics = typeof window !== "undefined" ? getAnalytics(app) : null;
-const db = getFirestore(app);
-const auth = getAuth(app);
+// Only create Firestore/Auth in the browser to avoid IndexedDB errors during SSR
+const db = typeof window !== "undefined" ? getFirestore(app) : null;
+const auth = typeof window !== "undefined" ? getAuth(app) : null;
 
-export { app, analytics, db, auth };
+export { app, db, auth };
