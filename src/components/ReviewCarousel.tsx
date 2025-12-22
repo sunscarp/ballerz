@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
+
 const images = [
   "https://jerseywala.in/cdn/shop/files/466063605_1142584110906606_4958682630687692071_n.jpg?v=1733433700&width=400",
   "https://jerseywala.in/cdn/shop/files/467378600_609455338167889_181525910962469965_n.jpg?v=1733433717&width=400",
@@ -10,25 +12,104 @@ const images = [
 ];
 
 export default function ReviewCarousel() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+
+  // update button visibility
+  const updateScrollButtons = () => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    setCanScrollLeft(el.scrollLeft > 0);
+    setCanScrollRight(
+      el.scrollLeft + el.clientWidth < el.scrollWidth - 5
+    );
+  };
+
+  // scroll by one card
+  const scrollByOne = (direction: "left" | "right") => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const card = el.querySelector<HTMLElement>("[data-card]");
+    if (!card) return;
+
+    const cardWidth = card.offsetWidth + 24; // gap included
+
+    el.scrollBy({
+      left: direction === "right" ? cardWidth : -cardWidth,
+      behavior: "smooth"
+    });
+  };
+
+  // auto-scroll every 9 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (canScrollRight) {
+        scrollByOne("right");
+      }
+    }, 9000);
+
+    return () => clearInterval(interval);
+  }, [canScrollRight]);
+
+  useEffect(() => {
+    updateScrollButtons();
+    const el = containerRef.current;
+    if (!el) return;
+
+    el.addEventListener("scroll", updateScrollButtons);
+    return () => el.removeEventListener("scroll", updateScrollButtons);
+  }, []);
+
   return (
-    <section className="py-16">
-      <h2 className="text-3xl md:text-4xl font-bold text-center mb-8 text-white">Customer Reviews</h2>
-      <div className="max-w-6xl mx-auto px-6">
-        <div className="overflow-hidden">
-          <div className="flex gap-6 overflow-x-auto scrollbar-hide snap-x snap-mandatory lg:grid lg:grid-cols-2 xl:grid-cols-3 lg:gap-6">
-            {images.map((src, idx) => (
-              <div
-                key={idx}
-                className="flex-none w-[280px] md:w-[calc(50%-12px)] lg:w-auto rounded-xl overflow-hidden border-4 border-gray-700 bg-gray-900 flex items-center justify-center max-h-[28rem] md:max-h-[36rem] snap-center"
-              >
-                <img 
-                  src={src} 
-                  alt={`Customer review ${idx + 1}`} 
-                  className="max-h-full w-auto object-contain" 
+    <section className="py-16 bg-black text-white">
+      <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-10">
+        Customer Reviews
+      </h2>
+
+      <div className="relative">
+        {/* LEFT BUTTON */}
+        {canScrollLeft && (
+          <button
+            onClick={() => scrollByOne("left")}
+            className="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-white text-black p-3 rounded-full shadow"
+          >
+            ‹
+          </button>
+        )}
+
+        {/* RIGHT BUTTON */}
+        {canScrollRight && (
+          <button
+            onClick={() => scrollByOne("right")}
+            className="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-white text-black p-3 rounded-full shadow"
+          >
+            ›
+          </button>
+        )}
+
+        {/* SCROLL STRIP */}
+        <div
+          ref={containerRef}
+          className="flex gap-6 overflow-x-auto px-6 lg:px-12 scrollbar-hide scroll-smooth"
+        >
+          {images.map((src, idx) => (
+            <div
+              key={idx}
+              data-card
+              className="flex-shrink-0 w-[70%] sm:w-[38%] lg:w-[24%]"
+            >
+              <div className="rounded-2xl overflow-hidden border-4 border-gray-700 bg-gray-900">
+                <img
+                  src={src}
+                  alt={`Customer review ${idx + 1}`}
+                  className="w-full h-auto object-contain"
                 />
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>

@@ -150,47 +150,49 @@ export default function OrdersPage() {
 
   if (loading || fetching) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-white font-semibold">
+      <div className="min-h-screen flex items-center justify-center text-white font-semibold bg-black">
         Loading orders...
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-black text-white px-12 py-10">
+    <div className="min-h-screen bg-black text-white px-4 sm:px-8 lg:px-12 py-6 sm:py-10">
       {/* Header */}
-      <div className="mb-10 space-y-2">
-        <div className="flex justify-between items-center">
+      <div className="mb-8 space-y-3">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
           <span
             onClick={() => router.push("/")}
-            className="text-2xl font-semibold cursor-pointer"
+            className="text-xl sm:text-2xl font-semibold cursor-pointer"
           >
             Ballerz
           </span>
-          <h1 className="text-3xl font-semibold">Your Orders</h1>
+          <h1 className="text-2xl sm:text-3xl font-semibold">
+            Your Orders
+          </h1>
         </div>
 
         <button
           onClick={() => router.back()}
-          className="font-medium hover:underline text-gray-300"
+          className="font-medium hover:underline text-gray-300 w-fit"
         >
           ← Back
         </button>
       </div>
 
       {orders.length === 0 ? (
-        <p className="text-lg text-gray-300">You have no orders yet.</p>
+        <p className="text-gray-300">You have no orders yet.</p>
       ) : (
         <div className="space-y-6">
           {orders.map((order) => (
             <div
               key={order.id}
-              className="border border-gray-600 rounded-xl p-6 space-y-4"
+              className="border border-gray-600 rounded-xl p-4 sm:p-6 space-y-4"
             >
               {/* Meta */}
-              <div className="flex justify-between items-center">
-                <div>
-                  <p className="font-semibold">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+                <div className="space-y-1">
+                  <p className="font-semibold break-all">
                     Order ID:{" "}
                     <span className="font-mono">{order.id}</span>
                   </p>
@@ -199,7 +201,7 @@ export default function OrdersPage() {
                   </p>
                 </div>
 
-                <span className="px-4 py-1 rounded-full border border-gray-500 font-medium capitalize">
+                <span className="px-4 py-1 rounded-full border border-gray-500 font-medium capitalize w-fit">
                   {order.status}
                 </span>
               </div>
@@ -213,16 +215,18 @@ export default function OrdersPage() {
 
                   return (
                     <div key={idx} className="space-y-1">
-                      <div className="flex justify-between text-sm">
-                        <span>
+                      <div className="flex justify-between text-sm gap-4">
+                        <span className="flex-1">
                           {item.product?.Description ?? "Product"} ×{" "}
                           {item.Quantity}
                         </span>
-                        <span>Rs. {total}</span>
+                        <span className="whitespace-nowrap">
+                          Rs. {total}
+                        </span>
                       </div>
 
                       {item.isCustomized && (
-                        <div className="ml-4 p-2 bg-gray-900 border border-gray-700 rounded">
+                        <div className="ml-3 p-2 bg-gray-900 border border-gray-700 rounded">
                           <p className="text-xs text-blue-400">
                             Customized: "{item.customizationText}"
                           </p>
@@ -245,7 +249,7 @@ export default function OrdersPage() {
               </div>
 
               {/* Actions */}
-              <div className="flex gap-4 pt-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4">
                 <button className="px-4 py-2 border border-gray-500 rounded font-medium hover:bg-gray-800">
                   Track Order
                 </button>
