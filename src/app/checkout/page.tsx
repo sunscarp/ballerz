@@ -407,13 +407,13 @@ if (storedBuyNow) {
 
   if (loading || loadingItems) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
           <div className="relative">
-            <div className="animate-spin rounded-full h-16 w-16 border-4 border-gray-700 border-t-white mx-auto mb-4"></div>
+            <div className="animate-spin rounded-full h-16 w-16 border-4 border-gray-200 border-t-gray-500 mx-auto mb-4"></div>
           </div>
-          <h2 className="text-xl font-semibold text-white mb-2">Loading Checkout</h2>
-          <p className="text-gray-400 text-sm">Please wait while we prepare your order...</p>
+          <h2 className="text-xl font-semibold text-black mb-2">Loading Checkout</h2>
+          <p className="text-gray-600 text-sm">Please wait while we prepare your order...</p>
         </div>
       </div>
     );
@@ -421,23 +421,23 @@ if (storedBuyNow) {
 
   if (orderStatus === "success") {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black px-4">
-        <div className="bg-gray-900 border border-gray-700 p-8 lg:p-12 rounded-2xl shadow-2xl text-center max-w-md w-full">
-          <div className="bg-green-500/20 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6">
+      <div className="min-h-screen flex items-center justify-center bg-white px-4">
+        <div className="bg-white border border-gray-200 p-8 lg:p-12 rounded-2xl shadow text-center max-w-md w-full">
+          <div className="bg-green-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6">
             <svg className="w-10 h-10 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h1 className="text-2xl lg:text-3xl font-bold text-white mb-4">Order Confirmed</h1>
-          <p className="text-gray-300 mb-4 text-sm lg:text-base">
+          <h1 className="text-2xl lg:text-3xl font-bold text-black mb-4">Order Confirmed</h1>
+          <p className="text-gray-600 mb-4 text-sm lg:text-base">
             Thank you for your purchase. Your order has been successfully placed.
           </p>
-          <div className="bg-gray-800 rounded-lg p-4 mb-6">
-            <p className="text-gray-400 text-sm mb-1">Order ID</p>
-            <p className="font-mono text-white text-lg font-semibold">{orderDetails?.orderId}</p>
+          <div className="bg-gray-50 rounded-lg p-4 mb-6">
+            <p className="text-gray-600 text-sm mb-1">Order ID</p>
+            <p className="font-mono text-black text-lg font-semibold">{orderDetails?.orderId}</p>
           </div>
-          <div className="bg-gray-800 rounded-lg p-4 mb-8">
-            <p className="text-gray-400 text-sm mb-1">Total Amount</p>
+          <div className="bg-gray-50 rounded-lg p-4 mb-8">
+            <p className="text-gray-600 text-sm mb-1">Total Amount</p>
             {orderDetails?.discountAmount > 0 ? (
               <div>
                 <span className="line-through text-gray-400 mr-2">{formatCurrency((orderDetails?.total || 0) + (orderDetails?.discountAmount || 0))}</span>
@@ -476,7 +476,7 @@ if (storedBuyNow) {
             </svg>
           </div>
           <h1 className="text-2xl lg:text-3xl font-bold text-white mb-4">Payment Failed</h1>
-          <p className="text-gray-300 mb-8 text-sm lg:text-base">
+          <p className="text-gray-600 mb-8 text-sm lg:text-base">
             Your payment could not be processed. Please try again or contact support for assistance.
           </p>
           <div className="flex flex-col gap-3">
@@ -500,20 +500,20 @@ if (storedBuyNow) {
 
   if (items.length === 0) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black px-4">
+      <div className="min-h-screen flex items-center justify-center bg-white px-4">
         <div className="text-center">
-          <div className="bg-gray-800 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
-            <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="bg-gray-100 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
+            <svg className="w-12 h-12 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
             </svg>
           </div>
-          <h1 className="text-2xl lg:text-3xl font-bold text-white mb-4">Your Cart is Empty</h1>
-          <p className="text-gray-400 mb-8 max-w-md mx-auto text-sm lg:text-base">
+          <h1 className="text-2xl lg:text-3xl font-bold text-black mb-4">Your Cart is Empty</h1>
+          <p className="text-gray-600 mb-8 max-w-md mx-auto text-sm lg:text-base">
             Looks like you haven't added any items to your cart yet. Start shopping to see your items here.
           </p>
           <button
             onClick={() => router.push("/")}
-            className="bg-white text-black px-8 py-3 rounded-lg font-semibold hover:bg-gray-200 transition-all duration-200 transform hover:scale-105"
+            className="bg-black text-white px-8 py-3 rounded-lg font-semibold hover:bg-gray-800 transition-all duration-200 transform hover:scale-105"
           >
             Start Shopping
           </button>
@@ -523,64 +523,64 @@ if (storedBuyNow) {
   }
 
   return (
-    <div className="min-h-screen bg-black py-6 lg:py-12">
+    <div className="min-h-screen bg-white py-6 lg:py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-8 lg:mb-12">
-          <h1 className="text-3xl lg:text-4xl font-bold text-white mb-2">Checkout</h1>
-          <p className="text-gray-400 text-sm lg:text-base">Complete your order securely</p>
+          <h1 className="text-3xl lg:text-4xl font-bold text-black mb-2">Checkout</h1>
+          <p className="text-gray-600 text-sm lg:text-base">Complete your order securely</p>
         </div>
 
         <div className="grid grid-cols-1 xl:grid-cols-5 gap-6 lg:gap-8">
           {/* Customer Details Form */}
           <div className="xl:col-span-3">
-            <div className="bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl overflow-hidden">
-              <div className="px-6 py-5 lg:px-8 lg:py-6 border-b border-gray-700">
-                <h2 className="text-xl lg:text-2xl font-bold text-white">Billing Information</h2>
-                <p className="text-gray-400 text-sm mt-1">Please fill in your details below</p>
+            <div className="bg-white border border-gray-200 rounded-2xl shadow overflow-hidden">
+              <div className="px-6 py-5 lg:px-8 lg:py-6 border-b border-gray-200">
+                <h2 className="text-xl lg:text-2xl font-bold text-black">Billing Information</h2>
+                <p className="text-gray-600 text-sm mt-1">Please fill in your details below</p>
               </div>
               
               <div className="px-6 py-6 lg:px-8 lg:py-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-semibold text-white mb-3">
+                    <label className="block text-sm font-semibold text-black mb-3">
                       Full Name <span className="text-red-400">*</span>
                     </label>
                     <input
                       type="text"
                       value={customerDetails.name}
                       onChange={(e) => handleInputChange("name", e.target.value)}
-                      className="w-full px-4 py-3 bg-gray-800 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-white focus:border-transparent transition-all duration-200 placeholder-gray-400"
+                      className="w-full px-4 py-3 bg-gray-50 border border-gray-300 text-black rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200 placeholder-gray-500"
                       placeholder="Enter your full name"
                       required
                     />
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-semibold text-white mb-3">
+                    <label className="block text-sm font-semibold text-black mb-3">
                       Email Address <span className="text-red-400">*</span>
                     </label>
                     <input
                       type="email"
                       value={customerDetails.email}
                       onChange={(e) => handleInputChange("email", e.target.value)}
-                      className="w-full px-4 py-3 bg-gray-800 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-white focus:border-transparent transition-all duration-200 placeholder-gray-400"
+                      className="w-full px-4 py-3 bg-gray-50 border border-gray-300 text-black rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200 placeholder-gray-500"
                       placeholder="you@example.com"
                       required
                     />
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-semibold text-white mb-3">
+                    <label className="block text-sm font-semibold text-black mb-3">
                       Phone Number <span className="text-red-400">*</span>
                     </label>
                     <div className="flex items-center gap-2">
-                      <span className="px-3 py-3 bg-gray-800 border border-gray-600 text-white rounded-l-lg select-none">+91</span>
+                      <span className="px-3 py-3 bg-gray-50 border border-gray-300 text-black rounded-l-lg select-none">+91</span>
                       <input
                         type="tel"
                         value={customerDetails.phone}
                         onChange={(e) => handleInputChange("phone", e.target.value)}
-                        className="w-full px-4 py-3 bg-gray-800 border border-gray-600 text-white rounded-r-lg focus:ring-2 focus:ring-white focus:border-transparent transition-all duration-200 placeholder-gray-400"
+                        className="w-full px-4 py-3 bg-gray-50 border border-gray-300 text-black rounded-r-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200 placeholder-gray-500"
                         placeholder="10 digit mobile number"
                         required
                         maxLength={10}
@@ -590,27 +590,27 @@ if (storedBuyNow) {
                   </div>
                   
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-semibold text-white mb-3">
+                    <label className="block text-sm font-semibold text-black mb-3">
                       Complete Address <span className="text-red-400">*</span>
                     </label>
                     <textarea
                       value={customerDetails.address}
                       onChange={(e) => handleInputChange("address", e.target.value)}
-                      className="w-full px-4 py-3 bg-gray-800 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-white focus:border-transparent transition-all duration-200 placeholder-gray-400 resize-none"
+                      className="w-full px-4 py-3 bg-gray-50 border border-gray-300 text-black rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200 placeholder-gray-500 resize-none"
                       rows={3}
                       placeholder="Street address, city, state"
                       required
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-white mb-3">
+                    <label className="block text-sm font-semibold text-black mb-3">
                       Pin Code <span className="text-red-400">*</span>
                     </label>
                     <input
                       type="text"
                       value={customerDetails.pinCode}
                       onChange={(e) => handleInputChange("pinCode", e.target.value)}
-                      className="w-full px-4 py-3 bg-gray-800 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-white focus:border-transparent transition-all duration-200 placeholder-gray-400"
+                      className="w-full px-4 py-3 bg-gray-50 border border-gray-300 text-black rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200 placeholder-gray-500"
                       placeholder="6 digit PIN code"
                       required
                       maxLength={6}
@@ -624,27 +624,27 @@ if (storedBuyNow) {
 
           {/* Order Summary */}
           <div className="xl:col-span-2">
-            <div className="bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl overflow-hidden sticky top-6">
-              <div className="px-6 py-5 lg:px-8 lg:py-6 border-b border-gray-700">
-                <h2 className="text-xl lg:text-2xl font-bold text-white">Order Summary</h2>
-                <p className="text-gray-400 text-sm mt-1">{items.length} item{items.length !== 1 ? 's' : ''} in your order</p>
+            <div className="bg-white border border-gray-200 rounded-2xl shadow overflow-hidden sticky top-6">
+              <div className="px-6 py-5 lg:px-8 lg:py-6 border-b border-gray-200">
+                <h2 className="text-xl lg:text-2xl font-bold text-black">Order Summary</h2>
+                <p className="text-gray-600 text-sm mt-1">{items.length} item{items.length !== 1 ? 's' : ''} in your order</p>
                 {/* Discount Code Input */}
                 <div className="mt-4 flex flex-col gap-2">
-                  <label htmlFor="discount-code" className="text-sm text-gray-300 font-semibold">Discount Code</label>
+                  <label htmlFor="discount-code" className="text-sm text-gray-600 font-semibold">Discount Code</label>
                   <div className="flex gap-2">
                     <input
                       id="discount-code"
                       type="text"
                       value={discountCode}
                       onChange={e => setDiscountCode(e.target.value)}
-                      className="px-3 py-2 rounded-lg bg-gray-800 border border-gray-600 text-white focus:ring-2 focus:ring-white focus:border-transparent text-sm"
+                      className="px-3 py-2 rounded-lg bg-gray-50 border border-gray-300 text-black focus:ring-2 focus:ring-black focus:border-transparent text-sm"
                       placeholder="Enter code"
                       autoComplete="off"
                       disabled={discountCodeStatus === "checking"}
                     />
                     <button
                       type="button"
-                      className="px-4 py-2 rounded-lg bg-white text-black font-semibold hover:bg-gray-200 text-sm"
+                      className="px-4 py-2 rounded-lg bg-black text-white font-semibold hover:bg-gray-800 text-sm"
                       disabled={!discountCode || discountCodeStatus === "checking"}
                       onClick={async () => {
                         setDiscountCodeStatus("checking");
@@ -667,13 +667,13 @@ if (storedBuyNow) {
                     >Apply</button>
                   </div>
                   {discountCodeStatus === "valid" && (
-                    <span className="text-green-400 text-xs">Code applied! {discountPercent}% off</span>
+                    <span className="text-green-600 text-xs">Code applied! {discountPercent}% off</span>
                   )}
                   {discountCodeStatus === "invalid" && (
-                    <span className="text-red-400 text-xs">Invalid code</span>
+                    <span className="text-red-600 text-xs">Invalid code</span>
                   )}
                   {discountCodeStatus === "checking" && (
-                    <span className="text-gray-400 text-xs">Checking...</span>
+                    <span className="text-gray-600 text-xs">Checking...</span>
                   )}
                 </div>
               </div>
@@ -691,31 +691,31 @@ if (storedBuyNow) {
                     const total = totalPrice * qty;
 
                     return (
-                      <div key={String(item.docId ?? item.ID)} className="flex gap-4 pb-4 border-b border-gray-700 last:border-b-0">
+                      <div key={String(item.docId ?? item.ID)} className="flex gap-4 pb-4 border-b border-gray-200 last:border-b-0">
                         <div className="relative">
                           <img 
                             src={img} 
                             alt={prod?.Product ?? `item-${key}`} 
-                            className="h-16 w-16 lg:h-20 lg:w-20 object-cover rounded-lg border border-gray-600"
+                            className="h-16 w-16 lg:h-20 lg:w-20 object-cover rounded-lg border border-gray-300"
                           />
                           <div className="pointer-events-none select-none flex items-center justify-center w-full" style={{ position: 'absolute', bottom: 0, right: 0, left: 0 }}>
-                            <span className="inline-flex items-center px-2.5 py-1 mb-[-0.5rem] rounded-full bg-gradient-to-br from-gray-800 to-gray-700 border border-gray-500 shadow text-xs font-semibold text-white min-w-[1.5rem] justify-center">
+                            <span className="inline-flex items-center px-2.5 py-1 mb-[-0.5rem] rounded-full bg-gray-100 border border-gray-200 shadow text-xs font-semibold text-black min-w-[1.5rem] justify-center">
                               x{qty}
                             </span>
                           </div>
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="font-semibold text-white truncate text-sm lg:text-base">{prod?.Product ?? `Item ${key}`}</p>
+                          <p className="font-semibold text-black truncate text-sm lg:text-base">{prod?.Product ?? `Item ${key}`}</p>
                           {prod?.Description && (
-                            <p className="text-xs lg:text-sm text-gray-400 truncate mt-1">{prod.Description}</p>
+                            <p className="text-xs lg:text-sm text-gray-600 truncate mt-1">{prod.Description}</p>
                           )}
-                          {item.Size && <p className="text-xs text-gray-400 mt-1">Size: {item.Size}</p>}
+                          {item.Size && <p className="text-xs text-gray-600 mt-1">Size: {item.Size}</p>}
                           
                           {item.isCustomized && qty === 1 && (
                             <div className="mt-2">
                               <button
                                 onClick={() => setShowCustomFor(prev => ({ ...prev, [key]: !prev[key] }))}
-                                className="inline-flex items-center gap-1 px-2 py-1 bg-gray-800 border border-gray-600 rounded-md text-gray-300 hover:bg-gray-700 transition-all duration-200 text-xs"
+                                className="inline-flex items-center gap-1 px-2 py-1 bg-gray-50 border border-gray-200 rounded-md text-gray-600 hover:bg-gray-100 transition-all duration-200 text-xs"
                               >
                                 <svg
                                   className={`h-3 w-3 transform ${showCustomFor[key] ? "rotate-180" : "rotate-0"} transition-transform`}
@@ -729,10 +729,10 @@ if (storedBuyNow) {
                               </button>
 
                               <div className={`mt-2 overflow-hidden transition-all duration-200 ${showCustomFor[key] ? "max-h-96 opacity-100" : "max-h-0 opacity-0"}`}>
-                                <div className="p-3 bg-gray-800 border border-gray-600 rounded-lg">
-                                  <p className="text-xs text-gray-300 break-words">"{item.customizationText || 'No details provided.'}"</p>
+                                <div className="p-3 bg-gray-50 border border-gray-200 rounded-lg">
+                                  <p className="text-xs text-gray-600 break-words">"{item.customizationText || 'No details provided.'}"</p>
                                   {item.customPrice != null && (
-                                    <p className="text-xs text-gray-400 mt-1">Additional: {formatCurrency(Number(item.customPrice))}</p>
+                                    <p className="text-xs text-gray-600 mt-1">Additional: {formatCurrency(Number(item.customPrice))}</p>
                                   )}
                                 </div>
                               </div>
@@ -743,14 +743,14 @@ if (storedBuyNow) {
                           <div className="flex flex-col items-end">
                             <div>
                               {prod?.OriginalPrice && (
-                                <span className="line-through text-gray-400 mr-1">{formatCurrency(Number(prod.OriginalPrice))}</span>
+                                <span className="line-through text-gray-500 mr-1">{formatCurrency(Number(prod.OriginalPrice))}</span>
                               )}
-                              <span className="text-yellow-400 font-bold text-sm lg:text-base">{formatCurrency(basePrice)}</span>
+                              <span className="text-yellow-600 font-bold text-sm lg:text-base">{formatCurrency(basePrice)}</span>
                             </div>
-                            <p className="font-bold text-white text-xs lg:text-sm mt-1">{formatCurrency(total)}</p>
+                            <p className="font-bold text-black text-xs lg:text-sm mt-1">{formatCurrency(total)}</p>
                           </div>
                           {customPrice > 0 && (
-                            <div className="text-xs text-gray-400 mt-1">
+                            <div className="text-xs text-gray-600 mt-1">
                               <div>{formatCurrency(basePrice)} base</div>
                               <div>+{formatCurrency(customPrice)} custom</div>
                             </div>
@@ -763,29 +763,29 @@ if (storedBuyNow) {
 
                 <div className="border-t border-gray-700 pt-4 mb-6">
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-400">Subtotal</span>
-                    <span className="text-white font-semibold">{formatCurrency(grandTotal)}</span>
+                    <span className="text-gray-600">Subtotal</span>
+                    <span className="text-black font-semibold">{formatCurrency(grandTotal)}</span>
                   </div>
                   {discountAmount > 0 && (
                     <div className="flex justify-between items-center mt-2">
-                      <span className="text-gray-400">Discount ({discountPercent}%)</span>
-                      <span className="text-green-400 font-semibold">- {formatCurrency(discountAmount)}</span>
+                      <span className="text-gray-600">Discount ({discountPercent}%)</span>
+                      <span className="text-green-600 font-semibold">- {formatCurrency(discountAmount)}</span>
                     </div>
                   )}
                   <div className="flex justify-between items-center mt-2">
-                    <span className="text-gray-400">Shipping</span>
-                    <span className="text-green-400 font-semibold">Free</span>
+                    <span className="text-gray-600">Shipping</span>
+                    <span className="text-green-600 font-semibold">Free</span>
                   </div>
-                  <div className="border-t border-gray-700 mt-4 pt-4">
+                  <div className="border-t border-gray-200 mt-4 pt-4">
                     <div className="flex justify-between items-center text-xl font-bold">
-                      <span className="text-white">Total</span>
+                      <span className="text-black">Total</span>
                       {discountAmount > 0 ? (
                         <span>
-                          <span className="line-through text-gray-400 mr-2">{formatCurrency(grandTotal)}</span>
-                          <span className="text-green-400 font-bold">{formatCurrency(discountedTotal)}</span>
+                          <span className="line-through text-gray-500 mr-2">{formatCurrency(grandTotal)}</span>
+                          <span className="text-green-600 font-bold">{formatCurrency(discountedTotal)}</span>
                         </span>
                       ) : (
-                        <span className="text-white">{formatCurrency(grandTotal)}</span>
+                        <span className="text-black">{formatCurrency(grandTotal)}</span>
                       )}
                     </div>
                   </div>
@@ -796,8 +796,8 @@ if (storedBuyNow) {
                   disabled={!isFormValid() || orderStatus === "processing" || !razorpayLoaded}
                   className={`w-full py-4 rounded-xl font-bold text-lg transition-all duration-200 transform ${
                     isFormValid() && razorpayLoaded && orderStatus !== "processing"
-                      ? "bg-white text-black hover:bg-gray-200 hover:scale-105 shadow-lg"
-                      : "bg-gray-700 text-gray-400 cursor-not-allowed"
+                      ? "bg-black text-white hover:bg-gray-800 hover:scale-105 shadow-lg"
+                      : "bg-gray-200 text-gray-400 cursor-not-allowed"
                   }`}
                 >
                   {orderStatus === "processing" ? (
