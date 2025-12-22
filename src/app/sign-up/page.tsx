@@ -17,7 +17,8 @@ export default function SignUpPage() {
   const [loading, setLoading] = useState(false);
 
   const addUserToFirestore = async (userId: string, email: string, displayName?: string) => {
-    const userRef = doc(db, "users", userId);
+    if (!db) throw new Error("Database not initialized");
+    const userRef = doc(db!, "users", userId);
     
     // Check if user already exists
     const userSnap = await getDoc(userRef);
@@ -47,6 +48,7 @@ export default function SignUpPage() {
     setLoading(true);
 
     try {
+      if (!auth) throw new Error("Auth not initialized");
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       await addUserToFirestore(userCredential.user.uid, email);
       router.push("/");
@@ -62,6 +64,7 @@ export default function SignUpPage() {
     setLoading(true);
 
     try {
+      if (!auth) throw new Error("Auth not initialized");
       const provider = new GoogleAuthProvider();
       const userCredential = await signInWithPopup(auth, provider);
       await addUserToFirestore(

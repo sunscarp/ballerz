@@ -87,9 +87,9 @@ export default function OrderManagementPage() {
 
   // Fetch all orders from Firestore
   useEffect(() => {
-    if (!isAdmin) return;
+    if (!isAdmin || !db) return;
 
-    const q = query(collection(db, "Orders"), orderBy("createdAt", "desc"));
+    const q = query(collection(db!, "Orders"), orderBy("createdAt", "desc"));
 
     const unsub = onSnapshot(
       q,
@@ -114,7 +114,7 @@ export default function OrderManagementPage() {
   const handleStatusUpdate = async (orderId: string, newStatus: OrderStatus) => {
     setUpdatingOrderId(orderId);
     try {
-      const orderRef = doc(db, "Orders", orderId);
+      const orderRef = doc(db!, "Orders", orderId);
       await updateDoc(orderRef, { status: newStatus });
       setError(null);
     } catch (err: any) {

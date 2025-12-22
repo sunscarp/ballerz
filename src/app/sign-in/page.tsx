@@ -19,6 +19,7 @@ export default function SignInPage() {
     setLoading(true);
 
     try {
+      if (!auth) throw new Error("Auth not initialized");
       await signInWithEmailAndPassword(auth, email, password);
       router.push("/");
     } catch (err: any) {
@@ -33,6 +34,7 @@ export default function SignInPage() {
     setLoading(true);
 
     try {
+      if (!auth) throw new Error("Auth not initialized");
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
       router.push("/");
