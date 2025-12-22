@@ -84,6 +84,25 @@ function CheckoutContent() {
   const searchParams = useSearchParams();
   const buyNowParam = searchParams.get("buyNow");
   const [isBuyNow, setIsBuyNow] = useState(false);
+  
+  useEffect(() => {
+  const raw = sessionStorage.getItem("postAuthAction");
+  if (!raw) return;
+
+  const action = JSON.parse(raw);
+
+  if (action.type === "BUY_NOW") {
+    // Store Buy Now payload temporarily for checkout
+    sessionStorage.setItem(
+      "buyNowItem",
+      JSON.stringify(action.payload)
+    );
+  }
+
+  sessionStorage.removeItem("postAuthAction");
+}, []);
+
+
 
   // Auto-fill email when user is available
   useEffect(() => {
@@ -110,6 +129,24 @@ function CheckoutContent() {
     let unsub: (() => void) | undefined;
     setItems([]);
     setLoadingItems(true);
+    const storedBuyNow = sessionStorage.getItem("buyNowItem");
+if (storedBuyNow) {
+  try {
+    const parsed = JSON.parse(storedBuyNow);
+    setItems([
+      {
+        ID: parsed.productId,
+        Quantity: parsed.quantity,
+        Size: parsed.size,
+      },
+    ]);
+    setIsBuyNow(true);
+  } catch (e) {
+    console.error("Invalid buyNowItem:", e);
+  }
+  setLoadingItems(false);
+  return () => {};
+}
 
     // If a buyNow parameter is present, use that single item for checkout
     if (buyNowParam) {
@@ -322,6 +359,9 @@ function CheckoutContent() {
               });
             }
           }
+          if (isBuyNow) {
+  sessionStorage.removeItem("buyNowItem");
+}
         } catch (error) {
           console.error("Error saving order:", error);
           setOrderStatus("failed");
