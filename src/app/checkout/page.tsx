@@ -35,6 +35,7 @@ type CustomerDetails = {
   email: string;
   phone: string;
   address: string;
+  pinCode: string;
 };
 
 type OrderStatus = "checkout" | "processing" | "success" | "failed";
@@ -74,6 +75,7 @@ function CheckoutContent() {
     email: user?.email || "",
     phone: "",
     address: "",
+    pinCode: "",
   });
   const [orderDetails, setOrderDetails] = useState<any>(null);
   const [razorpayLoaded, setRazorpayLoaded] = useState(false);
@@ -218,6 +220,14 @@ function CheckoutContent() {
   const discountedTotal = grandTotal - discountAmount;
 
   const handleInputChange = (field: keyof CustomerDetails, value: string) => {
+    if (field === "phone") {
+      // Only allow digits, max 10
+      value = value.replace(/\D/g, "").slice(0, 10);
+    }
+    if (field === "pinCode") {
+      // Only allow digits, max 6
+      value = value.replace(/\D/g, "").slice(0, 6);
+    }
     setCustomerDetails(prev => ({ ...prev, [field]: value }));
   };
 
@@ -256,9 +266,9 @@ function CheckoutContent() {
       })),
       customer: customerDetails,
       total: discountedTotal,
-      discountCode: discountCodeStatus === "valid" ? discountCode : undefined,
-      discountPercent: discountCodeStatus === "valid" ? discountPercent : undefined,
-      discountAmount: discountCodeStatus === "valid" ? discountAmount : undefined,
+      discountCode: discountCodeStatus === "valid" ? discountCode : "",
+      discountPercent: discountCodeStatus === "valid" ? discountPercent : 0,
+      discountAmount: discountCodeStatus === "valid" ? discountAmount : 0,
       createdAt: new Date().toISOString(),
       userId: user?.uid || null,
       userEmail: user?.email || customerDetails.email,
@@ -524,14 +534,19 @@ function CheckoutContent() {
                     <label className="block text-sm font-semibold text-white mb-3">
                       Phone Number <span className="text-red-400">*</span>
                     </label>
-                    <input
-                      type="tel"
-                      value={customerDetails.phone}
-                      onChange={(e) => handleInputChange("phone", e.target.value)}
-                      className="w-full px-4 py-3 bg-gray-800 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-white focus:border-transparent transition-all duration-200 placeholder-gray-400"
-                      placeholder="+91 98765 43210"
-                      required
-                    />
+                    <div className="flex items-center gap-2">
+                      <span className="px-3 py-3 bg-gray-800 border border-gray-600 text-white rounded-l-lg select-none">+91</span>
+                      <input
+                        type="tel"
+                        value={customerDetails.phone}
+                        onChange={(e) => handleInputChange("phone", e.target.value)}
+                        className="w-full px-4 py-3 bg-gray-800 border border-gray-600 text-white rounded-r-lg focus:ring-2 focus:ring-white focus:border-transparent transition-all duration-200 placeholder-gray-400"
+                        placeholder="10 digit mobile number"
+                        required
+                        maxLength={10}
+                        pattern="[0-9]{10}"
+                      />
+                    </div>
                   </div>
                   
                   <div className="md:col-span-2">
@@ -542,9 +557,24 @@ function CheckoutContent() {
                       value={customerDetails.address}
                       onChange={(e) => handleInputChange("address", e.target.value)}
                       className="w-full px-4 py-3 bg-gray-800 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-white focus:border-transparent transition-all duration-200 placeholder-gray-400 resize-none"
-                      rows={4}
-                      placeholder="Street address, city, state, PIN code"
+                      rows={3}
+                      placeholder="Street address, city, state"
                       required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-white mb-3">
+                      Pin Code <span className="text-red-400">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={customerDetails.pinCode}
+                      onChange={(e) => handleInputChange("pinCode", e.target.value)}
+                      className="w-full px-4 py-3 bg-gray-800 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-white focus:border-transparent transition-all duration-200 placeholder-gray-400"
+                      placeholder="6 digit PIN code"
+                      required
+                      maxLength={6}
+                      pattern="[0-9]{6}"
                     />
                   </div>
                 </div>
