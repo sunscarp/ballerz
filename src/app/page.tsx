@@ -146,7 +146,7 @@ export default function Home() {
                 <Link
                   key={p.ID}
                   href={`/product/${encodeURIComponent(p.Description)}`}
-                  className="flex-none w-[280px] md:w-[calc(50%-12px)] lg:w-auto border-2 border-gray-700 bg-gray-900 rounded-xl p-4 font-bold hover:shadow-lg hover:border-gray-500 hover:bg-gray-800 transition text-white flex flex-col items-center snap-center"
+                  className="flex-none w-[280px] md:w-[calc(50%-12px)] lg:w-auto text-white flex flex-col items-center snap-center px-2"
                 >
                   <div className="aspect-square border border-gray-600 rounded mb-3 overflow-hidden w-full max-w-xs">
                     <img
