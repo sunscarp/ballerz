@@ -33,7 +33,7 @@ export default function ProductPage() {
   const { user } = useAuth();
   const { addItem } = useCart();
   const [showSizeChart, setShowSizeChart] = useState(false);
-
+  const [zoomImage, setZoomImage] = useState<string | null>(null);
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedSize, setSelectedSize] = useState("M");
@@ -184,10 +184,12 @@ export default function ProductPage() {
           <div>
             <div className="relative bg-gray-50 border rounded-xl p-4 sm:p-6">
               <img
-                src={images[imageIndex]}
-                alt={product.Description}
-                className="w-full h-[300px] sm:h-[420px] lg:h-[520px] object-contain"
-              />
+  src={images[imageIndex]}
+  alt={product.Description}
+  className="w-full h-[300px] sm:h-[420px] lg:h-[520px] object-contain cursor-zoom-in"
+  onClick={() => setZoomImage(images[imageIndex])}
+/>
+
 
               {images.length > 1 && (
                 <>
@@ -382,6 +384,30 @@ export default function ProductPage() {
         src="/printrove-size-chart.jpg"
         alt="Printrove Size Chart"
         className="w-full h-auto rounded"
+      />
+    </div>
+  </div>
+)}
+ {zoomImage && (
+  <div
+    className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center px-4"
+    onClick={() => setZoomImage(null)}
+  >
+    <div
+      className="relative max-w-4xl w-full"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <button
+        onClick={() => setZoomImage(null)}
+        className="absolute top-3 right-3 text-white text-2xl font-bold"
+      >
+        ✕
+      </button>
+
+      <img
+        src={zoomImage}
+        alt="Zoomed product"
+        className="w-full max-h-[90vh] object-contain cursor-zoom-out"
       />
     </div>
   </div>
