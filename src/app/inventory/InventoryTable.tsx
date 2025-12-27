@@ -7,6 +7,7 @@ import {
   onSnapshot,
   addDoc,
   deleteDoc,
+  updateDoc,
   doc as firestoreDoc,
   serverTimestamp,
 } from "firebase/firestore";
@@ -33,6 +34,13 @@ export default function InventoryTable() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState<string>("");
+
+  // Edit modal state
+  const [showEditModal, setShowEditModal] = useState<boolean>(false);
+  const [editItem, setEditItem] = useState<Item | null>(null);
+  const [editField, setEditField] = useState<string>("");
+  const [editValue, setEditValue] = useState<string>("");
+  const [editBoolValue, setEditBoolValue] = useState<boolean>(false);
 
   // Add modal visibility and form state
   const [showAddModal, setShowAddModal] = useState<boolean>(false);
@@ -108,6 +116,53 @@ export default function InventoryTable() {
     }
   }
 
+  function openEditModal(item: Item) {
+    setEditItem(item);
+    setEditField("");
+    setEditValue("");
+    setEditBoolValue(Boolean(item?.Customize));
+    setShowEditModal(true);
+  }
+
+  function isNumericField(field: string) {
+    return ["Price", "OriginalPrice", "customprice", "ID"].includes(field);
+  }
+
+  function isBooleanField(field: string) {
+    return ["Customize"].includes(field);
+  }
+
+  async function handleEditSubmit(e?: React.FormEvent) {
+    e?.preventDefault();
+    if (!db) return setError("Firestore not initialized");
+    if (!editItem || !editItem.id) return setError("No item selected for edit");
+    if (!editField) return setError("Please select a field to update");
+
+    try {
+      const payload: any = {};
+      if (isBooleanField(editField)) {
+        payload[editField] = editBoolValue;
+      } else if (isNumericField(editField)) {
+        const num = Number(editValue);
+        if (Number.isNaN(num)) {
+          return setError("Please enter a valid number");
+        }
+        payload[editField] = num;
+      } else {
+        payload[editField] = editValue;
+      }
+
+      await updateDoc(firestoreDoc(db!, "inventory", editItem.id), payload);
+      setShowEditModal(false);
+      setEditItem(null);
+      setEditField("");
+      setEditValue("");
+      setError(null);
+    } catch (e: any) {
+      setError(String(e?.message ?? e));
+    }
+  }
+
 
   function updateForm<K extends keyof FormState>(k: K, v: FormState[K]) {
     setForm((s) => ({ ...s, [k]: v }));
@@ -170,6 +225,16 @@ export default function InventoryTable() {
             const img = it?.ImageUrl1 || it?.ImageUrl2 || it?.ImageUrl3 || "/favicon.ico";
             return (
               <div key={it.id ?? it.ID ?? it.Product} className="relative flex gap-4 rounded-lg border p-4 bg-slate-50 border-slate-200 shadow-sm">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    openEditModal(it);
+                  }}
+                  aria-label="Edit item"
+                  className="absolute left-2 bottom-2 z-20 rounded px-2 py-1 text-xs text-indigo-700 bg-white/90 hover:bg-indigo-50 border border-indigo-100"
+                >
+                  Edit
+                </button>
                 <button onClick={(e) => { e.stopPropagation(); handleDelete(it.id); }} aria-label="Delete item" className="absolute right-2 bottom-2 z-20 rounded px-2 py-1 text-xs text-red-600 bg-white/90 hover:bg-red-50 border border-red-100">Delete</button>
                 <div className="w-36 flex-shrink-0">
                   <img src={img} alt={it?.Product ?? "item"} className="h-28 w-full object-cover rounded" />
@@ -205,6 +270,105 @@ export default function InventoryTable() {
 
       {/* Floating Add button (viewport bottom-right) */}
       <button onClick={() => setShowAddModal(true)} className="fixed right-6 bottom-6 z-40 rounded-full bg-indigo-600 p-3 text-white shadow-xl hover:bg-indigo-700">Add</button>
+
+      {/* Edit modal */}
+      {showEditModal && editItem && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-black/30 to-black/40 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-2xl ring-1 ring-indigo-50">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-indigo-800">Edit Inventory Item</h3>
+              <button
+                onClick={() => {
+                  setShowEditModal(false);
+                  setEditItem(null);
+                  setEditField("");
+                  setEditValue("");
+                }}
+                className="text-sm text-slate-500"
+              >
+                Close
+              </button>
+            </div>
+
+            <form onSubmit={handleEditSubmit} className="mt-4 space-y-3">
+              <div className="text-xs text-slate-500">
+                Editing: <span className="font-medium text-slate-700">{editItem.Product ?? "Untitled"}</span> (ID: {editItem.ID ?? editItem.id})
+              </div>
+
+              <div>
+                <label className="block text-xs text-slate-600">Field to edit</label>
+                <select
+                  className="mt-1 w-full rounded border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 text-black"
+                  value={editField}
+                  onChange={(e) => {
+                    const field = e.target.value;
+                    setEditField(field);
+                    if (!field) return;
+                    const currentVal = (editItem as any)[field];
+                    if (isBooleanField(field)) {
+                      setEditBoolValue(Boolean(currentVal));
+                    } else {
+                      setEditValue(currentVal != null ? String(currentVal) : "");
+                    }
+                  }}
+                >
+                  <option value="">Select field</option>
+                  <option value="Product">Product</option>
+                  <option value="Description">Description</option>
+                  <option value="Price">Price</option>
+                  <option value="OriginalPrice">Original Price</option>
+                  <option value="customprice">Custom Price</option>
+                  <option value="Size">Size</option>
+                  <option value="Material">Material</option>
+                  <option value="CustomText">Custom Text</option>
+                  <option value="Customize">Customize</option>
+                  <option value="Tag">Tag</option>
+                  <option value="ImageUrl1">ImageUrl1</option>
+                  <option value="ImageUrl2">ImageUrl2</option>
+                  <option value="ImageUrl3">ImageUrl3</option>
+                </select>
+              </div>
+
+              {editField && (
+                <div>
+                  {isBooleanField(editField) ? (
+                    <div className="flex items-center gap-2 mt-2">
+                      <input
+                        type="checkbox"
+                        id="editCustomize"
+                        checked={editBoolValue}
+                        onChange={(e) => setEditBoolValue(e.target.checked)}
+                      />
+                      <label htmlFor="editCustomize" className="text-xs text-slate-600">
+                        {editBoolValue ? "Yes (true)" : "No (false)"}
+                      </label>
+                    </div>
+                  ) : (
+                    <>
+                      <label className="block text-xs text-slate-600 mt-2">New value</label>
+                      <input
+                        className="mt-1 w-full rounded border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 text-black"
+                        value={editValue}
+                        onChange={(e) => setEditValue(e.target.value)}
+                      />
+                    </>
+                  )}
+                </div>
+              )}
+
+              <div className="flex justify-end pt-2">
+                <button
+                  type="submit"
+                  className="rounded bg-indigo-600 px-4 py-2 text-sm text-white hover:bg-indigo-700 disabled:opacity-60"
+                  disabled={!editField}
+                >
+                  Update
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* Add modal */}
       {showAddModal && (
